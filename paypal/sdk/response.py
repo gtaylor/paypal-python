@@ -21,5 +21,5 @@ class Response(object):
             raise AttributeError(self)
 
     def success(self):
-        return self.ack.upper() in ACK_SUCCESS, ACK_SUCCESS_WITH_WARNING
+        return self.ack.upper() in (ACK_SUCCESS, ACK_SUCCESS_WITH_WARNING)
     success = property(success)
