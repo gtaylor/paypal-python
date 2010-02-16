@@ -1,14 +1,19 @@
 # coding=utf-8
 
 from cgi import parse_qs
-from settings import ACK_SUCCESS, ACK_SUCCESS_WITH_WARNING
+
 
 class Response(object):
-    def __init__(self, query_string):
+
+
+    def __init__(self , query_string , config ):
         self.raw = parse_qs(query_string)
+        self.config = config
+
 
     def __str__(self):
         return str(self.raw)
+
 
     def __getattr__(self, key):
         key = key.upper()
@@ -20,6 +25,7 @@ class Response(object):
         except KeyError:
             raise AttributeError(self)
 
+
     def success(self):
-        return self.ack.upper() in (ACK_SUCCESS, ACK_SUCCESS_WITH_WARNING)
+        return self.ack.upper() in ( self.config.ACK_SUCCESS , self.config.ACK_SUCCESS_WITH_WARNING )
     success = property(success)

@@ -1,55 +1,66 @@
 # coding=utf-8
 
-from sdk import *
+import sdk
 import unittest
+
+interface= sdk.Interface(
+	API_USERNAME = "#####",
+	API_PASSWORD = "#####",
+	API_SIGNATURE = "#####",
+)
+
+email_per= '#####'
+email_biz= '#####'
+visa_acct= '#####'
+visa_expr= '#####'
 
 class TestDirectPayment(unittest.TestCase):
     def setUp(self):
         self.credit_card = {
             'amt': '10.00',
             'creditcardtype': 'Visa',
-            'acct': '4812177017895760',
-            'expdate': '012010',
-            'cvv2': '962',
+            'acct': visa_acct,
+            'expdate': visa_expr,
+            'cvv2': '123',
             'firstname': 'John',
             'lastname': 'Doe',
-            'street': '1 Main St',
-            'city': 'San Jose',
+            'street': '1313 Mockingbird Lane',
+            'city': 'Beverly Hills',
             'state': 'CA',
-            'zip': '95131',
+            'zip': '90110',
             'countrycode': 'US',
             'currencycode': 'USD',
         }
 
     # def test_address_verify(self):
-    #     print(address_verify("patcol_1257523559_biz@gmail.com", "1 Main St", "95131"))
+    #     print(address_verify(email_biz, "1 Main St", "95131"))
 
     def test_sale(self):
-        sale = do_direct_payment('Sale', **self.credit_card)
+        sale = interface.do_direct_payment('Sale', **self.credit_card)
         self.assertTrue(sale.success)
 
-        details = get_transaction_details(sale.TRANSACTIONID)
+        details = interface.get_transaction_details(sale.TRANSACTIONID)
         self.assertTrue(details.success)
         self.assertEqual(details.PAYMENTSTATUS.upper(), 'COMPLETED')
         self.assertEqual(details.REASONCODE.upper(), 'NONE')
 
     def test_abbreviated_sale(self):
-        sale = do_direct_payment(**self.credit_card)
+        sale = interface.do_direct_payment(**self.credit_card)
         self.assertTrue(sale.success)
 
-        details = get_transaction_details(sale.TRANSACTIONID)
+        details = interface.get_transaction_details(sale.TRANSACTIONID)
         self.assertTrue(details.success)
         self.assertEqual(details.PAYMENTSTATUS.upper(), 'COMPLETED')
         self.assertEqual(details.REASONCODE.upper(), 'NONE')
 
     def test_authorize_and_delayed_capture(self):
         # authorize payment
-        auth = do_direct_payment('Authorization', **self.credit_card)
+        auth = interface.do_direct_payment('Authorization', **self.credit_card)
         self.assertTrue(auth.success)
         self.assertEqual(auth.AMT, self.credit_card['amt'])
 
         # capture payment
-        captured = do_capture(auth.TRANSACTIONID, auth.AMT)
+        captured = interface.do_capture(auth.TRANSACTIONID, auth.AMT)
         self.assertTrue(captured.success)
         self.assertEqual(auth.TRANSACTIONID, captured.PARENTTRANSACTIONID)
         self.assertEqual(captured.PAYMENTSTATUS.upper(), 'COMPLETED')
@@ -57,17 +68,17 @@ class TestDirectPayment(unittest.TestCase):
 
     def test_authorize_and_void(self):
         # authorize payment
-        auth = do_direct_payment('Authorization', **self.credit_card)
+        auth = interface.do_direct_payment('Authorization', **self.credit_card)
         self.assertTrue(auth.success)
         self.assertEqual(auth.AMT, self.credit_card['amt'])
 
         # void payment
         note = 'Voided the authorization.'
-        void = do_void(auth.TRANSACTIONID, note)
+        void = interface.do_void(auth.TRANSACTIONID, note)
         self.assertTrue(void.success)
         self.assertEqual(auth.TRANSACTIONID, void.AUTHORIZATIONID)
 
-        details = get_transaction_details(auth.TRANSACTIONID)
+        details = interface.get_transaction_details(auth.TRANSACTIONID)
         self.assertTrue(details.success)
         self.assertEqual(details.PAYMENTSTATUS.upper(), 'VOIDED')
 
@@ -92,9 +103,9 @@ class TestExpressCheckout(unittest.TestCase):
             A call to `DoAuthorization`.
             A call to `DoCapture`.
         """
-        setexp = set_express_checkout(amt='10.00', returnurl=self.returnurl, \
+        setexp = interface.set_express_checkout(amt='10.00', returnurl=self.returnurl, \
                      cancelurl=self.cancelurl, paymentaction='Order', \
-                     email='patcol_1257541103_per@gmail.com')
+                     email=email_per)
         self.assertTrue(setexp.success)
         # print(setexp)
         # getexp = get_express_checkout_details(token=setexp.token)

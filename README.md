@@ -5,9 +5,24 @@ To run test suite:
 
     python paypal/test.py
 
-The meat is in `paypal.sdk.methods`. The docs are in the docstrings and tests.
+The meat is in `paypal.sdk.interface`. The docs are in the docstrings and tests.
 
-A set of credentials are included, but please don't use them. Honor system folks. Use the instructions in Addendum A to create your own test account and get API credentials.
+- Create a paypal.sdk.interface.Interface object
+- pass it configuration args
+- that interface is how you access paypal.
+
+Pat Collins' original was useful, but had the config info hardcoded into a Settings object.
+
+So I refactored hid code into more of an OOP concept.
+
+basically, you create a sdk.Interface() instace with the account details.  that creates an internal config object of the PayPalConfig() class ( was settings.py ).  this could be overriden by making a raw config object and explicitly setting it.
+
+all of the original methods were migrated to the the Interface class -- and alphabetized -- as methods of that class.
+
+the end result -- which i was going for -- is that i can now construct an interface with the account settings -- and not worry about editing config files and having to manually place this library in every project.  It's also easier to lookup info.
+
+-- Jonathan Vanasco ( jonathan@2xlp.com )
+
 
 WHY?
 ----

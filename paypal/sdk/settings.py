@@ -1,30 +1,78 @@
 # coding=utf-8
 
-API_ENDPOINT = "https://api-3t.sandbox.paypal.com/nvp"
+from exceptions import *
 
-# 3TOKEN or UNIPAY
-API_AUTHENTICATION_MODE = "3TOKEN"
+class PayPalConfig(object):
 
-# 3TOKEN credentials
-API_USERNAME = "patcol_1257523559_biz_api1.gmail.com"
-API_PASSWORD = "1257523570"
-API_SIGNATURE = "AFcWxV21C7fd0v3bYYYRCpSSRl31AZEdoFKAMvYbAXdM9nKSDcaUlXDp"
+    _valid_= {
+        'API_ENVIRONMENT' : ['sandbox','production'],
+        'API_AUTHENTICATION_MODE' : ['3TOKEN','CERTIFICATE'],
+    }
 
-# UNIPAY credential
-# SUBJECT = "patcol_1257523559_biz@gmail.com"
+    _API_ENDPOINTS= {
+        '3TOKEN': {
+            'sandbox' : 'https://api-3t.sandbox.paypal.com/nvp',
+            'production' : 'https://api-3t.paypal.com/nvp',
+        }
+    }
 
-# TODO: implement use of API via http proxy
-USE_PROXY = False
-PROXY_HOST = "127.0.0.1"
-PROXY_PORT = "808"
+    _PAYPAL_URL_BASE= {
+        'sandbox' : 'https://www.sandbox.paypal.com/webscr?',
+        'production' : 'https://www.paypal.com/webscr?',
+    }
 
-# in seconds
-HTTP_TIMEOUT = 15
+    VERSION = "60.0"
 
-PAYPAL_URL = "https://www.sandbox.paypal.com/webscr?cmd=_express-checkout&token="
+    # defaults
+    API_ENVIRONMENT= 'sandbox'
+    API_AUTHENTICATION_MODE= '3TOKEN'
 
-VERSION = "60.0"
+    # 3TOKEN credentials
+    API_USERNAME = None
+    API_PASSWORD = None
+    API_SIGNATURE = None
 
-ACK_SUCCESS = "SUCCESS"
-ACK_SUCCESS_WITH_WARNING = "SUCCESSWITHWARNING"
+    API_ENDPOINT= None
+    PAYPAL_URL_BASE= None
+    
+    # UNIPAY credentials
+    UNIPAY_SUBJECT = None
+    
+    # in seconds
+    HTTP_TIMEOUT = 15
+    
+    ACK_SUCCESS = "SUCCESS"
+    ACK_SUCCESS_WITH_WARNING = "SUCCESSWITHWARNING"
+
+    
+
+    def __init__(self, **kwargs):
+
+        if 'API_ENVIRONMENT' not in kwargs:
+            kwargs['API_ENVIRONMENT']= self.API_ENVIRONMENT
+        if kwargs['API_ENVIRONMENT'] not in self._valid_['API_ENVIRONMENT']:
+            raise ApiError('Invalid API_ENVIRONMENT')
+
+        if 'API_AUTHENTICATION_MODE' not in kwargs:
+            kwargs['API_AUTHENTICATION_MODE']= self.API_AUTHENTICATION_MODE
+        if kwargs['API_AUTHENTICATION_MODE'] not in self._valid_['API_AUTHENTICATION_MODE']:
+            raise ApiError("Not a supported auth mode. Use one of: %s" % \
+                           ", ".join(self._valid_['API_AUTHENTICATION_MODE']))
+        
+        # set the endpoints
+        self.API_ENDPOINT= self._API_ENDPOINTS[self.API_AUTHENTICATION_MODE][self.API_ENVIRONMENT]
+        self.PAYPAL_URL_BASE= self._PAYPAL_URL_BASE[self.API_ENVIRONMENT]        
+        
+        # set the 3TOKEN required fields
+        if self.API_AUTHENTICATION_MODE == '3TOKEN':
+            for arg in ('API_USERNAME','API_PASSWORD','API_SIGNATURE'):
+                if arg not in kwargs:
+                    raise ApiError('Missing in PayPalConfig: %s ' % arg )
+                setattr( self , arg , kwargs[arg] )
+                
+        for arg in ( 'HTTP_TIMEOUT' ):
+            if arg in kwargs:
+                setattr( self , arg , kwargs[arg] )
+        
+
 
