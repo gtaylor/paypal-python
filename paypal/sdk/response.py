@@ -2,6 +2,8 @@
 
 from cgi import parse_qs
 
+import exceptions 
+
 
 class Response(object):
 
@@ -23,7 +25,10 @@ class Response(object):
                 return value[0]
             return value
         except KeyError:
-            raise AttributeError(self)
+            if self.config.KEY_ERROR == None:
+                return None
+            else:
+                raise AttributeError(self)
 
 
     def success(self):

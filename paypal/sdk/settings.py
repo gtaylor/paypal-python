@@ -17,11 +17,11 @@ class PayPalConfig(object):
     }
 
     _PAYPAL_URL_BASE= {
-        'sandbox' : 'https://www.sandbox.paypal.com/webscr?',
-        'production' : 'https://www.paypal.com/webscr?',
+        'sandbox' : 'https://www.sandbox.paypal.com/webscr',
+        'production' : 'https://www.paypal.com/webscr',
     }
 
-    VERSION = "60.0"
+    API_VERSION = "60.0"
 
     # defaults
     API_ENVIRONMENT= 'sandbox'
@@ -38,20 +38,29 @@ class PayPalConfig(object):
     # UNIPAY credentials
     UNIPAY_SUBJECT = None
     
+    ACK_SUCCESS = "SUCCESS"
+    ACK_SUCCESS_WITH_WARNING = "SUCCESSWITHWARNING"
+    
+    DEBUG_LEVEL= 0
+
     # in seconds
     HTTP_TIMEOUT = 15
     
-    ACK_SUCCESS = "SUCCESS"
-    ACK_SUCCESS_WITH_WARNING = "SUCCESSWITHWARNING"
-
+    RESPONSE_KEYERROR= "AttributeError"
+    
+    KEY_ERROR= True
+    
     
 
     def __init__(self, **kwargs):
+
+        print kwargs
 
         if 'API_ENVIRONMENT' not in kwargs:
             kwargs['API_ENVIRONMENT']= self.API_ENVIRONMENT
         if kwargs['API_ENVIRONMENT'] not in self._valid_['API_ENVIRONMENT']:
             raise ApiError('Invalid API_ENVIRONMENT')
+        self.API_ENVIRONMENT= kwargs['API_ENVIRONMENT']
 
         if 'API_AUTHENTICATION_MODE' not in kwargs:
             kwargs['API_AUTHENTICATION_MODE']= self.API_AUTHENTICATION_MODE
@@ -70,9 +79,11 @@ class PayPalConfig(object):
                     raise ApiError('Missing in PayPalConfig: %s ' % arg )
                 setattr( self , arg , kwargs[arg] )
                 
-        for arg in ( 'HTTP_TIMEOUT' ):
+        for arg in ( 'HTTP_TIMEOUT' , 'DEBUG_LEVEL' , 'RESPONSE_KEYERROR' ):
             if arg in kwargs:
                 setattr( self , arg , kwargs[arg] )
         
+
+    
 
 

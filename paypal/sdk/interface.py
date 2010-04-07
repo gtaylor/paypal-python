@@ -11,6 +11,14 @@ from response import Response
 from exceptions import ApiError
 
 
+def _check_required( requires , **kwargs ):
+    for req in requires :
+        # paypal api is never mixed-case
+        if req.lower() not in kwargs and req.upper() not in kwargs :
+            raise ApiError('missing required : %s' % req )
+    
+
+
 class Interface(object):
 
     def __init__( self , **kwargs ):
@@ -35,7 +43,7 @@ class Interface(object):
     
         urlvalues = {
             'METHOD': method,
-            'VERSION': self.config.VERSION
+            'VERSION': self.config.API_VERSION
         }
     
         headers = {}
@@ -54,14 +62,24 @@ class Interface(object):
         # print(headers)
         for k,v in kwargs.iteritems():
             urlvalues[k.upper()] = v
+            
+        if self.config.DEBUG_LEVEL >= 2 :
+            k= urlvalues.keys()
+            k.sort()
+            for i in k:
+               print " %-20s : %s" % ( i , urlvalues[i] )
+
     
         data = urllib.urlencode(urlvalues)
         req = urllib2.Request( self.config.API_ENDPOINT , data , headers )
         response = Response( urllib2.urlopen(req).read() , self.config )
+
+        if self.config.DEBUG_LEVEL >= 1 :
+            print self.config.API_ENDPOINT
     
         if not response.success:
-            print response
-            print response.__dict__
+            if self.config.DEBUG_LEVEL >= 1 :
+                print response
             raise ApiError(response)
 
         return response
@@ -214,10 +232,73 @@ class Interface(object):
 
 
 
-    def set_express_checkout( self , amt , returnurl , cancelurl , token='' , **kwargs ):
+    def set_express_checkout_legacy( self , amt , returnurl , cancelurl , token='' , **kwargs ):
         """Shortcut for the SetExpressCheckout method.
         """
         kwargs.update(locals())
         del kwargs['self']
         return self.call('SetExpressCheckout', **kwargs)
+
+
+    def set_express_checkout( self , token='' , **kwargs ):
+        """Shortcut for the SetExpressCheckout method.
+            JV did not like the original method. found it limiting.
+        """
+        kwargs.update(locals())
+        _check_required( ('amt',) , **kwargs )
+        del kwargs['self']
+        return self.call('SetExpressCheckout', **kwargs)
+
+
+    def do_express_checkout_payment( self , token , **kwargs ):
+        """Shortcut for the DoExpressCheckoutPayment method.
         
+            Required
+                *METHOD
+                *TOKEN
+                PAYMENTACTION
+                PAYERID
+                AMT
+                
+            Optional
+                RETURNFMFDETAILS
+                GIFTMESSAGE
+                GIFTRECEIPTENABLE
+                GIFTWRAPNAME
+                GIFTWRAPAMOUNT
+                BUYERMARKETINGEMAIL
+                SURVEYQUESTION
+                SURVEYCHOICESELECTED
+                CURRENCYCODE
+                ITEMAMT
+                SHIPPINGAMT
+                INSURANCEAMT
+                HANDLINGAMT
+                TAXAMT
+
+            Optional + USEFUL
+                INVNUM - invoice number
+                
+        """
+        kwargs.update(locals())
+        _check_required( ('paymentaction','payerid') , **kwargs )
+        del kwargs['self']
+        return self.call('DoExpressCheckoutPayment', **kwargs)
+        
+        
+    def generate_express_checkout_redirect_url( self, token ):
+        """submit token, get redirect url for client"""
+        url= "%s?cmd=_express-checkout&token=%s" % ( self.config.PAYPAL_URL_BASE , token )
+        return url
+        
+    
+    def generate_cart_upload_redirect_url( self,  **kwargs ):
+        """https://www.sandbox.paypal.com/webscr 
+            ?cmd=_cart
+            &upload=1
+        """
+        _check_required( ('business','item_name_1','amount_1','quantity_1') , **kwargs )
+        url= "%s?cmd=_cart&upload=1&" % ( self.config.PAYPAL_URL_BASE  )
+        additional= urllib.urlencode(kwargs)
+        url= url + additional
+        return url
