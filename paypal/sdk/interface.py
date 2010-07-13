@@ -10,6 +10,7 @@ from urlparse import urlsplit, urlunsplit
 from response import Response
 from exceptions import ApiError
 
+import types
 
 def _check_required( requires , **kwargs ):
     for req in requires :
@@ -17,6 +18,13 @@ def _check_required( requires , **kwargs ):
         if req.lower() not in kwargs and req.upper() not in kwargs :
             raise ApiError('missing required : %s' % req )
     
+
+def encode_utf8( **kwargs ):
+    u2= kwargs
+    for i in u2.keys():
+        if isinstance( u2[i] , types.UnicodeType ):
+            u2[i]= u2[i].encode('utf-8')
+    return u2
 
 
 class Interface(object):
@@ -69,8 +77,9 @@ class Interface(object):
             for i in k:
                print " %-20s : %s" % ( i , urlvalues[i] )
 
-    
-        data = urllib.urlencode(urlvalues)
+        u2= encode_utf8( **urlvalues )
+
+        data = urllib.urlencode(u2)
         req = urllib2.Request( self.config.API_ENDPOINT , data , headers )
         response = Response( urllib2.urlopen(req).read() , self.config )
 
@@ -298,7 +307,8 @@ class Interface(object):
             &upload=1
         """
         _check_required( ('business','item_name_1','amount_1','quantity_1') , **kwargs )
-        url= "%s?cmd=_cart&upload=1&" % ( self.config.PAYPAL_URL_BASE  )
-        additional= urllib.urlencode(kwargs)
-        url= url + additional
+        url= "%s?cmd=_cart&upload=1" % ( self.config.PAYPAL_URL_BASE  )
+        additional= encode_utf8( **kwargs )
+        additional= urllib.urlencode(additional)
+        url= url + "&" + additional
         return url

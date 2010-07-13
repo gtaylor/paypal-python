@@ -54,8 +54,6 @@ class PayPalConfig(object):
 
     def __init__(self, **kwargs):
 
-        print kwargs
-
         if 'API_ENVIRONMENT' not in kwargs:
             kwargs['API_ENVIRONMENT']= self.API_ENVIRONMENT
         if kwargs['API_ENVIRONMENT'] not in self._valid_['API_ENVIRONMENT']:
