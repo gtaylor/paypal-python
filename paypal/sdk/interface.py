@@ -84,7 +84,7 @@ class Interface(object):
         response = Response( urllib2.urlopen(req).read() , self.config )
 
         if self.config.DEBUG_LEVEL >= 1 :
-            print self.config.API_ENDPOINT
+            print " %-20s : %s" % ("ENDPOINT", self.config.API_ENDPOINT)
     
         if not response.success:
             if self.config.DEBUG_LEVEL >= 1 :
