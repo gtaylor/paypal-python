@@ -65,6 +65,9 @@ class PayPalConfig(object):
     
     RESPONSE_KEYERROR = "AttributeError"
     
+    # When True, return an AttributeError when the user tries to get an
+    # attribute on the response that does not exist. If False or None,
+    # return None for non-existant attribs.
     KEY_ERROR = True
 
     def __init__(self, **kwargs):

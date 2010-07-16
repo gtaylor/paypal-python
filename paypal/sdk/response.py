@@ -9,9 +9,20 @@ import exceptions
 
 class PayPalResponse(object):
     """
-    Parse and prepare the reponse from PayPal's API.
+    Parse and prepare the reponse from PayPal's API. Acts as somewhat of a
+    glorified dictionary for API responses.
+    
+    NOTE: Don't access self.raw directly. Just do something like
+    PayPalResponse.someattr, going through PayPalResponse.__getattr__().
     """
     def __init__(self, query_string, config):
+        """
+        query_string is the response from the API, in NVP format. This is
+        parseable by urlparse.parse_qs(), which sticks it into the self.raw
+        dict for retrieval by the user.
+        """
+        # A dict of NVP values. Don't access this directly, use
+        # PayPalResponse.attribname instead. See self.__getattr__().
         self.raw = parse_qs(query_string)
         self.config = config
 
@@ -19,6 +30,11 @@ class PayPalResponse(object):
         return str(self.raw)
 
     def __getattr__(self, key):
+        """
+        Handles the retrieval of attributes that don't exist on the object
+        already. This is used to get API response values.
+        """
+        # PayPal response names are always uppercase.
         key = key.upper()
         try:
             value = self.raw[key]
@@ -26,11 +42,11 @@ class PayPalResponse(object):
                 return value[0]
             return value
         except KeyError:
-            if self.config.KEY_ERROR == None:
-                return None
-            else:
+            if self.config.KEY_ERROR:
                 raise AttributeError(self)
-
+            else:
+                return None
+                
     def success(self):
         """
         Checks for the presence of errors in the response. Returns True if

@@ -63,7 +63,7 @@ class PayPalInterface(object):
         """
         socket.setdefaulttimeout(self.config.HTTP_TIMEOUT)
     
-        urlvalues = {
+        url_values = {
             'METHOD': method,
             'VERSION': self.config.API_VERSION
         }
@@ -73,26 +73,27 @@ class PayPalInterface(object):
             # headers['X-PAYPAL-SECURITY-USERID'] = API_USERNAME
             # headers['X-PAYPAL-SECURITY-PASSWORD'] = API_PASSWORD
             # headers['X-PAYPAL-SECURITY-SIGNATURE'] = API_SIGNATURE
-            urlvalues['USER'] = self.config.API_USERNAME
-            urlvalues['PWD'] = self.config.API_PASSWORD
-            urlvalues['SIGNATURE'] = self.config.API_SIGNATURE
+            url_values['USER'] = self.config.API_USERNAME
+            url_values['PWD'] = self.config.API_PASSWORD
+            url_values['SIGNATURE'] = self.config.API_SIGNATURE
         elif(self.config.API_AUTHENTICATION_MODE == "UNIPAY"):
             # headers['X-PAYPAL-SECURITY-SUBJECT'] = SUBJECT
-            urlvalues['SUBJECT'] = self.config.SUBJECT
+            url_values['SUBJECT'] = self.config.SUBJECT
         # headers['X-PAYPAL-REQUEST-DATA-FORMAT'] = 'NV'
         # headers['X-PAYPAL-RESPONSE-DATA-FORMAT'] = 'NV'
         # print(headers)
 
         for k,v in kwargs.iteritems():
-            urlvalues[k.upper()] = v
-            
+            url_values[k.upper()] = v
+        
+        # When in DEBUG level 2 or greater, print out the NVP pairs.
         if self.config.DEBUG_LEVEL >= 2:
-            k = urlvalues.keys()
+            k = url_values.keys()
             k.sort()
             for i in k:
-               print " %-20s : %s" % (i , urlvalues[i])
+               print " %-20s : %s" % (i , url_values[i])
 
-        u2 = self._encode_utf8( **urlvalues )
+        u2 = self._encode_utf8(**url_values)
 
         data = urllib.urlencode(u2)
         req = urllib2.Request(self.config.API_ENDPOINT, data, headers)
