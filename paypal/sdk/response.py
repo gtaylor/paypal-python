@@ -1,13 +1,13 @@
 # coding=utf-8
 """
-Response parsing and processing.
+PayPalResponse parsing and processing.
 """
 
-from cgi import parse_qs
+from urlparse import parse_qs
 
 import exceptions 
 
-class Response(object):
+class PayPalResponse(object):
     """
     Parse and prepare the reponse from PayPal's API.
     """

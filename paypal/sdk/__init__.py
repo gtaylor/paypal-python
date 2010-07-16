@@ -1,3 +1,3 @@
 # coding=utf-8
 
-from interface import Interface
+from interface import PayPalInterface

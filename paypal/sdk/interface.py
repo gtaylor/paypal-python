@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-The end developer will do most of their work with the Interface class found
+The end developer will do most of their work with the PayPalInterface class found
 in this module. Configuration, querying, and manipulation can all be done
 with it.
 """
@@ -12,23 +12,10 @@ import urllib2
 from urlparse import urlsplit, urlunsplit
 
 from settings import PayPalConfig
-from response import Response
+from response import PayPalResponse
 from exceptions import ApiError
-
-def _check_required(requires, **kwargs):
-    for req in requires :
-        # paypal api is never mixed-case
-        if req.lower() not in kwargs and req.upper() not in kwargs :
-            raise ApiError('missing required : %s' % req )
-    
-def encode_utf8( **kwargs ):
-    u2= kwargs
-    for i in u2.keys():
-        if isinstance( u2[i] , types.UnicodeType ):
-            u2[i]= u2[i].encode('utf-8')
-    return u2
-
-class Interface(object):
+   
+class PayPalInterface(object):
     """
     The end developers will do 95% of their work through this class. API
     queries, configuration, etc, all go through here. See the __init__ method
@@ -39,11 +26,31 @@ class Interface(object):
         Constructor, which passes all config directives to the config class
         via kwargs. For example:
         
-            paypal = Interface(API_USERNAME='somevalue')
+            paypal = PayPalInterface(API_USERNAME='somevalue')
         """
         self.config = PayPalConfig(**kwargs)
         
-    def call(self, method, **kwargs):
+    def _encode_utf8(self, **kwargs):
+        """
+        UTF8 encodes all of the NVP values.
+        """
+        unencoded_pairs = kwargs
+        for i in unencoded_pairs.keys():
+            if isinstance(unencoded_pairs[i], types.UnicodeType):
+                unencoded_pairs[i] = unencoded_pairs[i].encode('utf-8')
+        return unencoded_pairs
+    
+    def _check_required(self, requires, **kwargs):
+        """
+        Checks kwargs for the values specified in 'requires', which is a tuple
+        of strings. These strings are the NVP names of the required values.
+        """
+        for req in requires:
+            # PayPal api is never mixed-case.
+            if req.lower() not in kwargs and req.upper() not in kwargs:
+                raise ApiError('missing required : %s' % req)
+        
+    def _call(self, method, **kwargs):
         """
         Wrapper method for executing all API commands over HTTP. This method is
         further used to implement wrapper methods listed here:
@@ -75,20 +82,21 @@ class Interface(object):
         # headers['X-PAYPAL-REQUEST-DATA-FORMAT'] = 'NV'
         # headers['X-PAYPAL-RESPONSE-DATA-FORMAT'] = 'NV'
         # print(headers)
+
         for k,v in kwargs.iteritems():
             urlvalues[k.upper()] = v
             
         if self.config.DEBUG_LEVEL >= 2:
-            k= urlvalues.keys()
+            k = urlvalues.keys()
             k.sort()
             for i in k:
                print " %-20s : %s" % (i , urlvalues[i])
 
-        u2= encode_utf8( **urlvalues )
+        u2 = self._encode_utf8( **urlvalues )
 
         data = urllib.urlencode(u2)
         req = urllib2.Request(self.config.API_ENDPOINT, data, headers)
-        response = Response(urllib2.urlopen(req).read(), self.config)
+        response = PayPalResponse(urllib2.urlopen(req).read(), self.config)
 
         if self.config.DEBUG_LEVEL >= 1:
             print " %-20s : %s" % ("ENDPOINT", self.config.API_ENDPOINT)
@@ -128,7 +136,7 @@ class Interface(object):
         """
         args = locals()
         del args['self']
-        return self.call('AddressVerify', **args)
+        return self._call('AddressVerify', **args)
 
     def do_authorization(self, transactionid, amt):
         """Shortcut for the DoAuthorization method.
@@ -154,7 +162,7 @@ class Interface(object):
         """
         args = locals()
         del args['self']
-        return self.call('DoAuthorization', **args)
+        return self._call('DoAuthorization', **args)
 
     def do_capture(self, authorizationid, amt, completetype='Complete', **kwargs):
         """Shortcut for the DoCapture method.
@@ -166,7 +174,7 @@ class Interface(object):
         """
         kwargs.update(locals())
         del kwargs['self']
-        return self.call('DoCapture', **kwargs)
+        return self._call('DoCapture', **kwargs)
 
     def do_direct_payment(self, paymentaction="Sale", **kwargs):
         """Shortcut for the DoDirectPayment method.
@@ -205,7 +213,7 @@ class Interface(object):
         """
         kwargs.update(locals())
         del kwargs['self']
-        return self.call('DoDirectPayment', **kwargs)
+        return self._call('DoDirectPayment', **kwargs)
 
     def do_void(self, authorizationid, note=''):
         """Shortcut for the DoVoid method.
@@ -215,12 +223,12 @@ class Interface(object):
         """
         args = locals()
         del args['self']
-        return self.call('DoVoid', **args)
+        return self._call('DoVoid', **args)
 
     def get_express_checkout_details(self, token):
         """Shortcut for the GetExpressCheckoutDetails method.
         """
-        return self.call('GetExpressCheckoutDetails', token=token)
+        return self._call('GetExpressCheckoutDetails', token=token)
         
     def get_transaction_details(self, transactionid):
         """Shortcut for the GetTransactionDetails method.
@@ -230,7 +238,7 @@ class Interface(object):
         """
         args = locals()
         del args['self']
-        return self.call('GetTransactionDetails', **args)
+        return self._call('GetTransactionDetails', **args)
 
     def set_express_checkout_legacy(self, amt, returnurl, cancelurl, token='', 
                                     **kwargs ):
@@ -238,16 +246,16 @@ class Interface(object):
         """
         kwargs.update(locals())
         del kwargs['self']
-        return self.call('SetExpressCheckout', **kwargs)
+        return self._call('SetExpressCheckout', **kwargs)
 
     def set_express_checkout(self, token='', **kwargs):
         """Shortcut for the SetExpressCheckout method.
             JV did not like the original method. found it limiting.
         """
         kwargs.update(locals())
-        _check_required( ('amt',) , **kwargs )
         del kwargs['self']
-        return self.call('SetExpressCheckout', **kwargs)
+        self._check_required(('amt',), **kwargs)
+        return self._call('SetExpressCheckout', **kwargs)
 
     def do_express_checkout_payment(self, token, **kwargs):
         """Shortcut for the DoExpressCheckoutPayment method.
@@ -280,9 +288,9 @@ class Interface(object):
                 
         """
         kwargs.update(locals())
-        _check_required(('paymentaction', 'payerid'), **kwargs)
         del kwargs['self']
-        return self.call('DoExpressCheckoutPayment', **kwargs)
+        self._check_required(('paymentaction', 'payerid'), **kwargs)
+        return self._call('DoExpressCheckoutPayment', **kwargs)
         
     def generate_express_checkout_redirect_url(self, token):
         """Submit token, get redirect url for client."""
@@ -295,8 +303,8 @@ class Interface(object):
             &upload=1
         """
         required_vals = ('business', 'item_name_1', 'amount_1', 'quantity_1')
-        _check_required(required_vals, **kwargs)
+        self._check_required(required_vals, **kwargs)
         url = "%s?cmd=_cart&upload=1" % self.config.PAYPAL_URL_BASE
-        additional = encode_utf8(**kwargs)
+        additional = self._encode_utf8(**kwargs)
         additional = urllib.urlencode(additional)
         return url + "&" + additional
