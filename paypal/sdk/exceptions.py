@@ -1,7 +1,12 @@
 # coding=utf-8
+"""
+Various PayPal API related exceptions.
+"""
 
 class Error(Exception):
-    """Parent Error"""
+    """
+    Parent Error class. Nothing error-specific here.
+    """
     def __init__(self, message):
         self.message = message
     def __str__(self):
@@ -9,4 +14,7 @@ class Error(Exception):
 
 
 class ApiError(Error):
+    """
+    Used to denote some kind of generic API error.
+    """
     pass

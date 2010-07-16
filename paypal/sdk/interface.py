@@ -1,24 +1,26 @@
 # coding=utf-8
+"""
+The end developer will do most of their work with the Interface class found
+in this module. Configuration, querying, and manipulation can all be done
+with it.
+"""
 
-from settings import PayPalConfig
-
+import types
 import socket
 import urllib
 import urllib2
 from urlparse import urlsplit, urlunsplit
 
+from settings import PayPalConfig
 from response import Response
 from exceptions import ApiError
 
-import types
-
-def _check_required( requires , **kwargs ):
+def _check_required(requires, **kwargs):
     for req in requires :
         # paypal api is never mixed-case
         if req.lower() not in kwargs and req.upper() not in kwargs :
             raise ApiError('missing required : %s' % req )
     
-
 def encode_utf8( **kwargs ):
     u2= kwargs
     for i in u2.keys():
@@ -26,17 +28,22 @@ def encode_utf8( **kwargs ):
             u2[i]= u2[i].encode('utf-8')
     return u2
 
-
 class Interface(object):
-
-    def __init__( self , **kwargs ):
-        """core paypal interface"""
+    """
+    The end developers will do 95% of their work through this class. API
+    queries, configuration, etc, all go through here. See the __init__ method
+    for config related details.
+    """
+    def __init__(self , **kwargs):
+        """
+        Constructor, which passes all config directives to the config class
+        via kwargs. For example:
         
-        self.config= PayPalConfig( **kwargs )
+            paypal = Interface(API_USERNAME='somevalue')
+        """
+        self.config = PayPalConfig(**kwargs)
         
-        
-        
-    def call( self , method , **kwargs ):
+    def call(self, method, **kwargs):
         """
         Wrapper method for executing all API commands over HTTP. This method is
         further used to implement wrapper methods listed here:
@@ -47,7 +54,7 @@ class Interface(object):
     
         ``kwargs`` will be a hash of
         """
-        socket.setdefaulttimeout( self.config.HTTP_TIMEOUT )
+        socket.setdefaulttimeout(self.config.HTTP_TIMEOUT)
     
         urlvalues = {
             'METHOD': method,
@@ -55,14 +62,14 @@ class Interface(object):
         }
     
         headers = {}
-        if( self.config.API_AUTHENTICATION_MODE == "3TOKEN" ):
+        if(self.config.API_AUTHENTICATION_MODE == "3TOKEN"):
             # headers['X-PAYPAL-SECURITY-USERID'] = API_USERNAME
             # headers['X-PAYPAL-SECURITY-PASSWORD'] = API_PASSWORD
             # headers['X-PAYPAL-SECURITY-SIGNATURE'] = API_SIGNATURE
             urlvalues['USER'] = self.config.API_USERNAME
             urlvalues['PWD'] = self.config.API_PASSWORD
             urlvalues['SIGNATURE'] = self.config.API_SIGNATURE
-        elif( self.config.API_AUTHENTICATION_MODE == "UNIPAY" ):
+        elif(self.config.API_AUTHENTICATION_MODE == "UNIPAY"):
             # headers['X-PAYPAL-SECURITY-SUBJECT'] = SUBJECT
             urlvalues['SUBJECT'] = self.config.SUBJECT
         # headers['X-PAYPAL-REQUEST-DATA-FORMAT'] = 'NV'
@@ -71,31 +78,29 @@ class Interface(object):
         for k,v in kwargs.iteritems():
             urlvalues[k.upper()] = v
             
-        if self.config.DEBUG_LEVEL >= 2 :
+        if self.config.DEBUG_LEVEL >= 2:
             k= urlvalues.keys()
             k.sort()
             for i in k:
-               print " %-20s : %s" % ( i , urlvalues[i] )
+               print " %-20s : %s" % (i , urlvalues[i])
 
         u2= encode_utf8( **urlvalues )
 
         data = urllib.urlencode(u2)
-        req = urllib2.Request( self.config.API_ENDPOINT , data , headers )
-        response = Response( urllib2.urlopen(req).read() , self.config )
+        req = urllib2.Request(self.config.API_ENDPOINT, data, headers)
+        response = Response(urllib2.urlopen(req).read(), self.config)
 
-        if self.config.DEBUG_LEVEL >= 1 :
+        if self.config.DEBUG_LEVEL >= 1:
             print " %-20s : %s" % ("ENDPOINT", self.config.API_ENDPOINT)
     
         if not response.success:
-            if self.config.DEBUG_LEVEL >= 1 :
+            if self.config.DEBUG_LEVEL >= 1:
                 print response
             raise ApiError(response)
 
         return response
 
-
-
-    def address_verify( self, email , street , zip ):
+    def address_verify(self, email, street, zip):
         """Shortcut for the AddressVerify method.
     
         ``email``::
@@ -121,13 +126,11 @@ class Interface(object):
             Maximumstring length: 16 single-byte characters.
             Whitespace and case of input value are ignored.
         """
-        args= locals()
+        args = locals()
         del args['self']
         return self.call('AddressVerify', **args)
 
-
-
-    def do_authorization( self, transactionid , amt ):
+    def do_authorization(self, transactionid, amt):
         """Shortcut for the DoAuthorization method.
     
         Use the TRANSACTIONID from DoExpressCheckoutPayment for the
@@ -149,13 +152,11 @@ class Interface(object):
                 returned by `DoAuthorization`)
     
         """
-        args= locals()
+        args = locals()
         del args['self']
         return self.call('DoAuthorization', **args)
 
-
-
-    def do_capture( self , authorizationid , amt , completetype='Complete' , **kwargs ):
+    def do_capture(self, authorizationid, amt, completetype='Complete', **kwargs):
         """Shortcut for the DoCapture method.
     
         Use the TRANSACTIONID from DoAuthorization, DoDirectPayment or
@@ -167,9 +168,7 @@ class Interface(object):
         del kwargs['self']
         return self.call('DoCapture', **kwargs)
 
-
-
-    def do_direct_payment( self , paymentaction="Sale" , **kwargs):
+    def do_direct_payment(self, paymentaction="Sale", **kwargs):
         """Shortcut for the DoDirectPayment method.
     
         ``paymentaction`` could be 'Authorization' or 'Sale'
@@ -208,48 +207,40 @@ class Interface(object):
         del kwargs['self']
         return self.call('DoDirectPayment', **kwargs)
 
-
-
-    def do_void( self , authorizationid , note='' ):
+    def do_void(self, authorizationid, note=''):
         """Shortcut for the DoVoid method.
     
         Use the TRANSACTIONID from DoAuthorization, DoDirectPayment or
         DoExpressCheckoutPayment for the ``authorizationid``.
         """
-        args= locals()
+        args = locals()
         del args['self']
         return self.call('DoVoid', **args)
-    
 
-
-    def get_express_checkout_details( self , token):
+    def get_express_checkout_details(self, token):
         """Shortcut for the GetExpressCheckoutDetails method.
         """
         return self.call('GetExpressCheckoutDetails', token=token)
         
-
-
-    def get_transaction_details( self , transactionid ):
+    def get_transaction_details(self, transactionid):
         """Shortcut for the GetTransactionDetails method.
     
         Use the TRANSACTIONID from DoAuthorization, DoDirectPayment or
         DoExpressCheckoutPayment for the ``transactionid``.
         """
-        args= locals()
+        args = locals()
         del args['self']
         return self.call('GetTransactionDetails', **args)
 
-
-
-    def set_express_checkout_legacy( self , amt , returnurl , cancelurl , token='' , **kwargs ):
+    def set_express_checkout_legacy(self, amt, returnurl, cancelurl, token='', 
+                                    **kwargs ):
         """Shortcut for the SetExpressCheckout method.
         """
         kwargs.update(locals())
         del kwargs['self']
         return self.call('SetExpressCheckout', **kwargs)
 
-
-    def set_express_checkout( self , token='' , **kwargs ):
+    def set_express_checkout(self, token='', **kwargs):
         """Shortcut for the SetExpressCheckout method.
             JV did not like the original method. found it limiting.
         """
@@ -258,8 +249,7 @@ class Interface(object):
         del kwargs['self']
         return self.call('SetExpressCheckout', **kwargs)
 
-
-    def do_express_checkout_payment( self , token , **kwargs ):
+    def do_express_checkout_payment(self, token, **kwargs):
         """Shortcut for the DoExpressCheckoutPayment method.
         
             Required
@@ -290,25 +280,23 @@ class Interface(object):
                 
         """
         kwargs.update(locals())
-        _check_required( ('paymentaction','payerid') , **kwargs )
+        _check_required(('paymentaction', 'payerid'), **kwargs)
         del kwargs['self']
         return self.call('DoExpressCheckoutPayment', **kwargs)
         
-        
-    def generate_express_checkout_redirect_url( self, token ):
-        """submit token, get redirect url for client"""
-        url= "%s?cmd=_express-checkout&token=%s" % ( self.config.PAYPAL_URL_BASE , token )
-        return url
-        
+    def generate_express_checkout_redirect_url(self, token):
+        """Submit token, get redirect url for client."""
+        url_vars = (self.config.PAYPAL_URL_BASE, token)
+        return "%s?cmd=_express-checkout&token=%s" % url_vars
     
-    def generate_cart_upload_redirect_url( self,  **kwargs ):
+    def generate_cart_upload_redirect_url(self, **kwargs):
         """https://www.sandbox.paypal.com/webscr 
             ?cmd=_cart
             &upload=1
         """
-        _check_required( ('business','item_name_1','amount_1','quantity_1') , **kwargs )
-        url= "%s?cmd=_cart&upload=1" % ( self.config.PAYPAL_URL_BASE  )
-        additional= encode_utf8( **kwargs )
-        additional= urllib.urlencode(additional)
-        url= url + "&" + additional
-        return url
+        required_vals = ('business', 'item_name_1', 'amount_1', 'quantity_1')
+        _check_required(required_vals, **kwargs)
+        url = "%s?cmd=_cart&upload=1" % self.config.PAYPAL_URL_BASE
+        additional = encode_utf8(**kwargs)
+        additional = urllib.urlencode(additional)
+        return url + "&" + additional
