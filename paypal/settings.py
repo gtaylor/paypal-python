@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-This module contains config objects needed by paypal.sdk.interface.PayPalInterface.
+This module contains config objects needed by paypal.interface.PayPalInterface.
 Most of this is transparent to the end developer, as the PayPalConfig object
 is instantiated by the PayPalInterface object.
 """
@@ -11,7 +11,7 @@ class PayPalConfig(object):
     """
     The PayPalConfig object is used to allow the developer to perform API
     queries with any number of different accounts or configurations. This
-    is done by instantiating paypal.sdk.interface.PayPalInterface, passing config
+    is done by instantiating paypal.interface.PayPalInterface, passing config
     directives as keyword args.
     """
     # Used to validate correct values for certain config directives.

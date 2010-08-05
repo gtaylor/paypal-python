@@ -1,11 +1,21 @@
+"""
+This module creates PayPalInterface objects for each of the unit test
+modules to use. We create a new one for each unittest module to reduce any
+chance of tainting tests by all of them using the same interface. IE: Values
+getting modified.
+
+See get_interface_obj() below, as well as the README in this tests directory.
+"""
 import sys
 import os
 
+# The unit tests import this module, so we'll do the path modification to use
+# this paypal project instead of any potential globally installed ones.
 project_root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if not project_root_dir in sys.path:
     sys.path.insert(0, project_root_dir)
 
-import paypal
+from paypal import PayPalInterface
 
 try:
     import api_details
@@ -23,4 +33,9 @@ except ImportError:
     sys.exit(1)
 
 def get_interface_obj():
-    return paypal.PayPalInterface(config=api_details.CONFIG)
+    """
+    Use this function to get a PayPalInterface object with your test API
+    credentials (as specified in api_details.py). Create new interfaces for
+    each unit test module to avoid potential variable pollution. 
+    """
+    return PayPalInterface(config=api_details.CONFIG)
