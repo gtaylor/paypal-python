@@ -13,7 +13,7 @@ from urlparse import urlsplit, urlunsplit
 
 from settings import PayPalConfig
 from response import PayPalResponse
-from exceptions import PayPalError
+from exceptions import PayPalError, PayPalAPIResponseError
    
 class PayPalInterface(object):
     """
@@ -113,7 +113,7 @@ class PayPalInterface(object):
         if not response.success:
             if self.config.DEBUG_LEVEL >= 1:
                 print response
-            raise PayPalError(response)
+            raise PayPalAPIResponseError(response)
 
         return response
 

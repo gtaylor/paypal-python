@@ -18,3 +18,16 @@ class PayPalError(Error):
     Used to denote some kind of generic error.
     """
     pass
+
+
+class PayPalConfigError(Error):
+    """
+    Raised when a configuration problem arises.
+    """
+    pass
+
+class PayPalAPIResponseError(Error):
+    """
+    Raised when there is an error coming back with a PayPal NVP API response.
+    """
+    pass
