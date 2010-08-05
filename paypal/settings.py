@@ -84,14 +84,14 @@ class PayPalConfig(object):
             kwargs['API_ENVIRONMENT']= self.API_ENVIRONMENT
         # Make sure the environment is one of the acceptable values.
         if kwargs['API_ENVIRONMENT'] not in self._valid_['API_ENVIRONMENT']:
-            raise ApiError('Invalid API_ENVIRONMENT')
+            raise PayPalError('Invalid API_ENVIRONMENT')
         self.API_ENVIRONMENT = kwargs['API_ENVIRONMENT']
 
         if 'API_AUTHENTICATION_MODE' not in kwargs:
             kwargs['API_AUTHENTICATION_MODE']= self.API_AUTHENTICATION_MODE
         # Make sure the auth mode is one of the known/implemented methods.
         if kwargs['API_AUTHENTICATION_MODE'] not in self._valid_['API_AUTHENTICATION_MODE']:
-            raise ApiError("Not a supported auth mode. Use one of: %s" % \
+            raise PayPalError("Not a supported auth mode. Use one of: %s" % \
                            ", ".join(self._valid_['API_AUTHENTICATION_MODE']))
         
         # Set the API endpoints, which is a cheesy way of saying API servers.
@@ -102,7 +102,7 @@ class PayPalConfig(object):
         if self.API_AUTHENTICATION_MODE == '3TOKEN':
             for arg in ('API_USERNAME','API_PASSWORD','API_SIGNATURE'):
                 if arg not in kwargs:
-                    raise ApiError('Missing in PayPalConfig: %s ' % arg)
+                    raise PayPalError('Missing in PayPalConfig: %s ' % arg)
                 setattr(self, arg, kwargs[arg])
                 
         for arg in ('HTTP_TIMEOUT' , 'DEBUG_LEVEL' , 'RESPONSE_KEYERROR'):

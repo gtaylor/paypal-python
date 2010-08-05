@@ -13,8 +13,8 @@ class Error(Exception):
         return repr(self.message)
 
 
-class ApiError(Error):
+class PayPalError(Error):
     """
-    Used to denote some kind of generic API error.
+    Used to denote some kind of generic error.
     """
     pass

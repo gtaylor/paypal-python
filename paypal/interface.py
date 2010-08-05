@@ -13,7 +13,7 @@ from urlparse import urlsplit, urlunsplit
 
 from settings import PayPalConfig
 from response import PayPalResponse
-from exceptions import ApiError
+from exceptions import PayPalError
    
 class PayPalInterface(object):
     """
@@ -56,7 +56,7 @@ class PayPalInterface(object):
         for req in requires:
             # PayPal api is never mixed-case.
             if req.lower() not in kwargs and req.upper() not in kwargs:
-                raise ApiError('missing required : %s' % req)
+                raise PayPalError('missing required : %s' % req)
         
     def _call(self, method, **kwargs):
         """
@@ -113,7 +113,7 @@ class PayPalInterface(object):
         if not response.success:
             if self.config.DEBUG_LEVEL >= 1:
                 print response
-            raise ApiError(response)
+            raise PayPalError(response)
 
         return response
 
