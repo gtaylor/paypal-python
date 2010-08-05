@@ -3,21 +3,15 @@
 Various PayPal API related exceptions.
 """
 
-class Error(Exception):
-    """
-    Parent Error class. Nothing error-specific here.
-    """
-    def __init__(self, message):
-        self.message = message
-    def __str__(self):
-        return repr(self.message)
-
-
-class PayPalError(Error):
+class PayPalError(Exception):
     """
     Used to denote some kind of generic error.
     """
-    pass
+    def __init__(self, message):
+        self.message = message
+
+    def __str__(self):
+        return repr(self.message)
 
 
 class PayPalConfigError(Error):
@@ -25,6 +19,7 @@ class PayPalConfigError(Error):
     Raised when a configuration problem arises.
     """
     pass
+
 
 class PayPalAPIResponseError(Error):
     """
