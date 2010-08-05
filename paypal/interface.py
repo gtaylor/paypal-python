@@ -21,14 +21,22 @@ class PayPalInterface(object):
     queries, configuration, etc, all go through here. See the __init__ method
     for config related details.
     """
-    def __init__(self , **kwargs):
+    def __init__(self , config=None, **kwargs):
         """
         Constructor, which passes all config directives to the config class
         via kwargs. For example:
         
             paypal = PayPalInterface(API_USERNAME='somevalue')
+            
+        Optionally, you may pass a 'config' kwarg to provide your own
+        PayPalConfig object.
         """
-        self.config = PayPalConfig(**kwargs)
+        if config:
+            # User provided their own PayPalConfig object.
+            self.config = config
+        else:
+            # Take the kwargs and stuff them in a new PayPalConfig object.
+            self.config = PayPalConfig(**kwargs)
         
     def _encode_utf8(self, **kwargs):
         """

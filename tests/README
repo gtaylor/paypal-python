@@ -1,0 +1,8 @@
+In order to run these tests, you must copy the included api_details_blank.py
+file to api_details.py and substitute the API credential placeholders with your
+own PayPal test account credentials. All tests will fail unless you do this.
+
+Once your credentials are in place, you'll want to run the tests through
+the runner.py module:
+
+    python runnery.py
