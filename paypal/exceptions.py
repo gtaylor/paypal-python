@@ -14,14 +14,14 @@ class PayPalError(Exception):
         return repr(self.message)
 
 
-class PayPalConfigError(Error):
+class PayPalConfigError(PayPalError):
     """
     Raised when a configuration problem arises.
     """
     pass
 
 
-class PayPalAPIResponseError(Error):
+class PayPalAPIResponseError(PayPalError):
     """
     Raised when there is an error coming back with a PayPal NVP API response.
     """
