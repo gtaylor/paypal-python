@@ -137,7 +137,7 @@ class PayPalInterface(object):
             Postal code to verify.
     
             To pass verification, the value of Zip mustmatch the first five
-            single-byte characters of the postal code ofthe verified postal
+            single-byte characters of the postal code of the verified postal
             address for the verified PayPal member.
     
             Maximumstring length: 16 single-byte characters.

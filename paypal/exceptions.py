@@ -7,11 +7,15 @@ class PayPalError(Exception):
     """
     Used to denote some kind of generic error.
     """
-    def __init__(self, message):
-        self.message = message
+    def __init__(self, message, error_code=None):
+        self.response = message
+        self.error_code = error_code
 
     def __str__(self):
-        return repr(self.message)
+        if self.error_code:
+            return "%s (Error Code: %s)" % (repr(self.message), self.error_code)
+        else:
+            return repr(self.message)
 
 
 class PayPalConfigError(PayPalError):
@@ -24,5 +28,13 @@ class PayPalConfigError(PayPalError):
 class PayPalAPIResponseError(PayPalError):
     """
     Raised when there is an error coming back with a PayPal NVP API response.
+    
+    Pipe the error message from the API to the exception, along with
+    the error code.
     """
-    pass
+    def __init__(self, response):
+        self.response = response
+        self.error_code = response.L_ERRORCODE0
+        self.message = response.L_LONGMESSAGE0
+        self.short_message = response.L_SHORTMESSAGE0
+        self.correlation_id = response.CORRELATIONID
