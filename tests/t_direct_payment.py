@@ -1,6 +1,7 @@
 # coding=utf-8
 
 import unittest
+from paypal import PayPalAPIResponseError
 import interface_factory
 import api_details
 
@@ -32,6 +33,18 @@ class TestDirectPayment(unittest.TestCase):
         self.assertTrue(details.success)
         self.assertEqual(details.PAYMENTSTATUS.upper(), 'COMPLETED')
         self.assertEqual(details.REASONCODE.upper(), 'NONE')
+        
+    def test_exception_handling(self):
+        """
+        Make sure response exception handling is working as intended by
+        forcing some bad values.
+        """
+        new_details = self.credit_card
+        # Set an invalid credit card number.
+        new_details['acct'] = '123'
+        # Make sure this raises an exception.
+        self.assertRaises(PayPalAPIResponseError, interface.do_direct_payment, 
+                          'Sale', **new_details)
 
     def test_abbreviated_sale(self):
         sale = interface.do_direct_payment(**self.credit_card)
