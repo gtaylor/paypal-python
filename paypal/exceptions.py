@@ -5,7 +5,9 @@ Various PayPal API related exceptions.
 
 class PayPalError(Exception):
     """
-    Used to denote some kind of generic error.
+    Used to denote some kind of generic error. This does not include errors
+    returned from PayPal API responses. Those are handled by the more
+    specific exception classes below.
     """
     def __init__(self, message, error_code=None):
         self.response = message
@@ -34,7 +36,7 @@ class PayPalAPIResponseError(PayPalError):
     """
     def __init__(self, response):
         self.response = response
-        self.error_code = response.L_ERRORCODE0
+        self.error_code = int(response.L_ERRORCODE0)
         self.message = response.L_LONGMESSAGE0
         self.short_message = response.L_SHORTMESSAGE0
         self.correlation_id = response.CORRELATIONID
