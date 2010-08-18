@@ -10,7 +10,7 @@ class PayPalError(Exception):
     specific exception classes below.
     """
     def __init__(self, message, error_code=None):
-        self.response = message
+        self.message = message
         self.error_code = error_code
 
     def __str__(self):
@@ -18,6 +18,14 @@ class PayPalError(Exception):
             return "%s (Error Code: %s)" % (repr(self.message), self.error_code)
         else:
             return repr(self.message)
+        
+    def _get_message(self): 
+        return self._message
+
+    def _set_message(self, message): 
+        self._message = message
+        
+    message = property(_get_message, _set_message)
 
 
 class PayPalConfigError(PayPalError):

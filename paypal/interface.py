@@ -249,14 +249,6 @@ class PayPalInterface(object):
         del args['self']
         return self._call('GetTransactionDetails', **args)
 
-    def set_express_checkout_legacy(self, amt, returnurl, cancelurl, token='', 
-                                    **kwargs ):
-        """Shortcut for the SetExpressCheckout method.
-        """
-        kwargs.update(locals())
-        del kwargs['self']
-        return self._call('SetExpressCheckout', **kwargs)
-
     def set_express_checkout(self, token='', **kwargs):
         """Shortcut for the SetExpressCheckout method.
             JV did not like the original method. found it limiting.

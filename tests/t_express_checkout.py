@@ -13,7 +13,37 @@ class TestExpressCheckout(unittest.TestCase):
         self.cancelurl = 'http://www.ebay.com'
 
     def test_sale(self):
-        pass
+        """
+        A call to `SetExpressCheckoutDetails`.
+        A call to `DoExpressCheckoutPayment`.
+        A call to `GetExpressCheckoutDetails`.
+        """
+        setexp_response = interface.set_express_checkout(paymentrequest_0_amt='10.00', 
+            returnurl=self.returnurl, cancelurl=self.cancelurl, 
+            paymentrequest_0_paymentaction='Order', 
+            email=api_details.EMAIL_PERSONAL)
+        self.assertTrue(setexp_response)
+        token = setexp_response.token
+        print setexp_response
+        print "TOKEN", token
+        print "REDIR URL: https://www.sandbox.paypal.com/webscr??cmd=_express-checkout&token=%s&AMT=%s&CURRENCYCODE=USD&RETURNURL=%s&CANCELURL=%s" % (
+                                                        token, '10.00',
+                                                        self.returnurl,
+                                                        self.cancelurl)
+        print "REDIR2  : %s" % interface.generate_express_checkout_redirect_url(token)
+        getexp_response = interface.get_express_checkout_details(token)
+        print getexp_response
+        
+        """
+        This is where you'd redirect your user's browser to PayPal.
+        
+        https://www.sandbox.paypal.com/webscr
+            ?cmd=_express-checkout&token=tokenValue
+            &AMT=amount
+            &CURRENCYCODE=currencyID
+            &RETURNURL=return_url
+            &CANCELURL=cancel_url
+        """
 
     def test_authorize_and_delayed_capture(self):
         """
@@ -27,13 +57,7 @@ class TestExpressCheckout(unittest.TestCase):
             A call to `DoAuthorization`.
             A call to `DoCapture`.
         """
-        setexp = interface.set_express_checkout(amt='10.00', returnurl=self.returnurl, \
-                     cancelurl=self.cancelurl, paymentaction='Order', \
-                     email=api_details.EMAIL_PERSONAL)
-        self.assertTrue(setexp.success)
-        # print(setexp)
-        # getexp = get_express_checkout_details(token=setexp.token)
-        # print(getexp)
+        pass
 
     def test_authorize_and_void(self):
         """
