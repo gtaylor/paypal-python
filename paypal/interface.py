@@ -262,7 +262,6 @@ class PayPalInterface(object):
         """Shortcut for the DoExpressCheckoutPayment method.
         
             Required
-                *METHOD
                 *TOKEN
                 PAYMENTACTION
                 PAYERID
