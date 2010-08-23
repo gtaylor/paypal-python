@@ -1,33 +1,36 @@
-REQUIREMENTS
+Requirements
 ------------
-* Python 2.6 or 2.7
 
-QUICKSTART
-----------
+* Python 2.6 or 2.7 (But would be easy to patch for 2.5 and below)
+
+Installation
+------------
+    
+Through pip:
+    pip install paypal
+or easy_install:
+    easy_install paypal
+or download the source, un-tar/un-zip it, cd into paypal-python, and:
+    python setup.py install
+    
+
+Quick Start
+-----------
 
 To run test suite:
     
     python tests/runner.py
 
-The meat is in `paypal.interface`. The docs are in the docstrings and tests.
+The meat is in paypal.interface. The docs are in the docstrings and tests.
 
-- Create a paypal.interface.PayPalInterface object
-- Pass it configuration kwargs
-- That interface is how you access PayPal.
+* Create a paypal.interface.PayPalInterface object
+* Pass it configuration kwargs (See tests.interface_factory.get_interface_obj
+  for a good example of how this works).
+* That interface is how you access PayPal. Take a look at the currently
+  implemented methods in paypal.interface.
 
-Create a PayPalInterface() instace with the account details passed as kwargs.  
-This creates an internal PayPalConfig object.
-
-WHY?
-----
-
-The real value for me is having a working test suite with easy-to-understand 
-and use methods on the APIs.
-
-TODO
-----
-
-See TODO
+To-Do
+-----
 
 Also, the following methods don't do much yet, because Express Checkout hasn't 
 been implemented at all:
@@ -35,12 +38,8 @@ been implemented at all:
     address_verify
     do_authorization
     get_express_checkout_details
-    
-`set_express_checkout` technically works, but it needs 
-`get_express_checkout_details` to do all of the work, and that method requires 
-a PAYERID that you can only get if the user logs into PayPal.
 
-ADDENDUM A
+Addendum A
 ----------
 
 Instructions for setting up a Sandbox Website Payments Pro account. More 
