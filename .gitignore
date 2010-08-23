@@ -4,3 +4,6 @@
 .settings
 api_details.py
 .DS_Store
+build
+dist
+MANIFEST
