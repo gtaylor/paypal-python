@@ -44,8 +44,8 @@ The meat is in paypal.interface. The docs are in the docstrings and tests.
 Support/Help
 ------------
 
-If you have any problems, questions, or ideas, feel free to post on our issue 
-tracker at http://github.com/duointeractive/paypal-python/issues
+If you have any problems, questions, or ideas, feel free to post on our 
+[issue tracker](http://github.com/duointeractive/paypal-python/issues).
 
 To-Do
 -----
