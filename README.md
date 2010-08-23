@@ -1,3 +1,13 @@
+PayPal-Python
+=============
+
+This package implements Python's Website Payments Pro in Python. This currently
+includes Direct Payments (Credit card payments without a PayPal Account) and
+PayPal Express Checkout (Payment via a PayPal account).
+
+This module is best used in conjunction with the PayPal documentation found
+at https://www.x.com/community/ppx/documentation#wpp
+
 Requirements
 ------------
 
@@ -28,6 +38,12 @@ The meat is in paypal.interface. The docs are in the docstrings and tests.
   for a good example of how this works).
 * That interface is how you access PayPal. Take a look at the currently
   implemented methods in paypal.interface.
+  
+Support/Help
+------------
+
+If you have any problems, questions, or ideas, feel free to post on our issue 
+tracker at http://github.com/duointeractive/paypal-python/issues
 
 To-Do
 -----
