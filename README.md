@@ -9,7 +9,7 @@ This module is best used in conjunction with the
 [official PayPal Documentation](https://www.x.com/community/ppx/documentation#wpp).
 
 *NOTE: This module is not created by, endorsed by, or in any way affiliated
-with PayPal*
+with PayPal.*
 
 Requirements
 ------------
@@ -25,7 +25,6 @@ or easy_install:
     easy_install paypal
 or download the source, un-tar/un-zip it, cd into paypal-python, and:
     python setup.py install
-    
 
 Quick Start
 -----------
