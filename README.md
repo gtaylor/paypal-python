@@ -5,8 +5,11 @@ This package implements Python's Website Payments Pro in Python. This currently
 includes Direct Payments (Credit card payments without a PayPal Account) and
 PayPal Express Checkout (Payment via a PayPal account).
 
-This module is best used in conjunction with the PayPal documentation found
-at https://www.x.com/community/ppx/documentation#wpp
+This module is best used in conjunction with the 
+[official PayPal Documentation](https://www.x.com/community/ppx/documentation#wpp).
+
+*NOTE: This module is not created by, endorsed by, or in any way affiliated
+with PayPal*
 
 Requirements
 ------------
