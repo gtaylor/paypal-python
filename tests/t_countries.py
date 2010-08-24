@@ -18,11 +18,6 @@ class TestCountries(unittest.TestCase):
         self.assertEqual(us_fullval, countries.get_name_from_abbrev('us'))
         self.assertRaises(KeyError, countries.get_name_from_abbrev, 'us',
                          case_sensitive=True)
-        
-    def test_get_two_tuple(self):
-        country_tuple = countries.get_two_tuple()
-        is_tuple = isinstance(country_tuple, tuple)
-        self.assertEqual(True, is_tuple)
 
 if __name__ == '__main__':
     unittest.main()
