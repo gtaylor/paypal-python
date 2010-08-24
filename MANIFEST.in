@@ -1,3 +1,4 @@
-README.md
+include README.md
 recursive-include paypal *.py
 recursive-include tests *.py README
+exclude tests/api_details.py
