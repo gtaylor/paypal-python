@@ -12,9 +12,10 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import unittest
 import t_direct_payment
 import t_express_checkout
+import t_countries
 
 # A list of the modules under the tests package that should be ran.
-test_modules = [t_direct_payment, t_express_checkout]
+test_modules = [t_direct_payment, t_express_checkout, t_countries]
 
 # Fire off all of the tests.
 for mod in test_modules:

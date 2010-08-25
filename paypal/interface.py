@@ -9,11 +9,10 @@ import types
 import socket
 import urllib
 import urllib2
-from urlparse import urlsplit, urlunsplit
 
-from settings import PayPalConfig
-from response import PayPalResponse
-from exceptions import PayPalError, PayPalAPIResponseError
+from paypal.settings import PayPalConfig
+from paypal.response import PayPalResponse
+from paypal.exceptions import PayPalError, PayPalAPIResponseError
    
 class PayPalInterface(object):
     """
@@ -91,19 +90,19 @@ class PayPalInterface(object):
         # headers['X-PAYPAL-RESPONSE-DATA-FORMAT'] = 'NV'
         # print(headers)
 
-        for k,v in kwargs.iteritems():
-            url_values[k.upper()] = v
+        for key, value in kwargs.iteritems():
+            url_values[key.upper()] = value
         
         # When in DEBUG level 2 or greater, print out the NVP pairs.
         if self.config.DEBUG_LEVEL >= 2:
             k = url_values.keys()
             k.sort()
             for i in k:
-               print " %-20s : %s" % (i , url_values[i])
+                print " %-20s : %s" % (i , url_values[i])
 
-        u2 = self._encode_utf8(**url_values)
+        url = self._encode_utf8(**url_values)
 
-        data = urllib.urlencode(u2)
+        data = urllib.urlencode(url)
         req = urllib2.Request(self.config.API_ENDPOINT, data, headers)
         response = PayPalResponse(urllib2.urlopen(req).read(), self.config)
 

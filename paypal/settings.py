@@ -5,7 +5,7 @@ Most of this is transparent to the end developer, as the PayPalConfig object
 is instantiated by the PayPalInterface object.
 """
 
-from exceptions import PayPalConfigError, PayPalError
+from paypal.exceptions import PayPalConfigError, PayPalError
 
 class PayPalConfig(object):
     """

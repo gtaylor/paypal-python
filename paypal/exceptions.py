@@ -20,9 +20,15 @@ class PayPalError(Exception):
             return repr(self.message)
         
     def _get_message(self): 
+        """
+        get the message from error
+        """
         return self._message
 
     def _set_message(self, message): 
+        """
+        set the message from error
+        """
         self._message = message
         
     message = property(_get_message, _set_message)

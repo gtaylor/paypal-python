@@ -5,7 +5,7 @@ PayPalResponse parsing and processing.
 
 from urlparse import parse_qs
 
-import exceptions 
+import paypal.exceptions 
 
 class PayPalResponse(object):
     """
