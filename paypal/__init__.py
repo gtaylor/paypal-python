@@ -4,4 +4,4 @@ from paypal.settings import PayPalConfig
 from paypal.exceptions import PayPalError, PayPalConfigError, PayPalAPIResponseError
 import paypal.countries
 
-VERSION = '1.0'
+VERSION = '1.0.1'
