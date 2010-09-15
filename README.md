@@ -14,7 +14,7 @@ with PayPal.*
 Requirements
 ------------
 
-* Python 2.6 or 2.7 (But would be easy to patch for 2.5 and below)
+* Python 2.5, 2.6 or 2.7 (But would be easy to patch for 2.5 and below)
 
 Installation
 ------------
