@@ -1,0 +1,16 @@
+Changes introduced with each version.
+
+1.0.3
+-----
+* Python 2.5 compatibility. (Manik)
+
+1.0.2
+-----
+* Documentation updates. (gtaylor)
+* We now distribute with a copy of the Apache License. (Greg)
+
+1.0.1
+-----
+* Misc. more specific imports to avoid import errors. (grigouze)
+* Fixes to country test suite. (grigouze)
+* Added a countries module that has all of the countries PayPal supports. (gtaylor)
