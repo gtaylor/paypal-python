@@ -5,4 +5,4 @@ own PayPal test account credentials. All tests will fail unless you do this.
 Once your credentials are in place, you'll want to run the tests through
 the runner.py module:
 
-    python runnery.py
+    python runner.py
