@@ -3,3 +3,4 @@ project. If you submit a patch, feel free to add your name to the list.
 
     Pat Collins <pat@burned.com> - Original author
     Greg Taylor <gtaylor@duointeractive.com> - Current maintainer
+    Manik Surtani <manik@jboss.org> - Python 2.5 compatibility
