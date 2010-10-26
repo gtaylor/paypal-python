@@ -145,6 +145,42 @@ class PayPalInterface(object):
         args = locals()
         del args['self']
         return self._call('AddressVerify', **args)
+    
+    def create_recurring_payments_profile(self, **kwargs):
+        """Shortcut for the CreateRecurringPaymentsProfile method.
+        Currently, this method only supports the Direct Payment flavor.
+        
+        It requires standard credit card information and a few additional
+        parameters related to the billing. e.g.:
+        
+            profile_info = {
+                # Credit card information
+                'creditcardtype': 'Visa',
+                'acct': '4812177017895760',
+                'expdate': '102015',
+                'cvv2': '123',
+                'firstname': 'John',
+                'lastname': 'Doe',
+                'street': '1313 Mockingbird Lane',
+                'city': 'Beverly Hills',
+                'state': 'CA',
+                'zip': '90110',
+                'countrycode': 'US',
+                'currencycode': 'USD',
+                # Recurring payment information
+                'profilestartdate': '2010-10-25T0:0:0',
+                'billingperiod': 'Month',
+                'billingfrequency': '6',
+                'amt': '10.00',
+                'desc': '6 months of our product.'
+            }
+            response = create_recurring_payments_profile(**profile_info)
+            
+            The above NVPs compose the bare-minimum request for creating a
+            profile. For the complete list of parameters, visit this URI:
+            https://www.x.com/docs/DOC-1168
+        """
+        return self._call('CreateRecurringPaymentsProfile', **kwargs)
 
     def do_authorization(self, transactionid, amt):
         """Shortcut for the DoAuthorization method.
@@ -307,3 +343,51 @@ class PayPalInterface(object):
         additional = self._encode_utf8(**kwargs)
         additional = urllib.urlencode(additional)
         return url + "&" + additional
+    
+    def get_recurring_payments_profile_details(self, profileid):
+        """Shortcut for the GetRecurringPaymentsProfile method.
+        
+        This returns details for a recurring payment plan. The ``profileid`` is
+        a value included in the response retrieved by the function
+        ``create_recurring_payments_profile``. The profile details include the
+        data provided when the profile was created as well as default values
+        for ignored fields and some pertinent stastics.
+        
+        e.g.:
+            response = create_recurring_payments_profile(**profile_info)
+            profileid = response.PROFILEID
+            details = get_recurring_payments_profile(profileid)
+        
+        The response from PayPal is somewhat self-explanatory, but for a
+        description of each field, visit the following URI:
+        https://www.x.com/docs/DOC-1194 
+        """
+        args = locals()
+        del args['self']
+        return self._call('GetRecurringPaymentsProfileDetails', **args)
+    
+    def manage_recurring_payments_profile_status(self, profileid, action):
+        """Shortcut to the ManageRecurringPaymentsProfileStatus method.
+        
+        ``profileid`` is the same profile id used for getting profile details.
+        ``action`` should be either 'Cancel', 'Suspend', or 'Reactivate'.
+        """
+        args = locals()
+        del args['self']
+        return self._call('ManageRecurringPaymentsProfileStatus', **args)
+    
+    def update_recurring_payments_profile(self, profileid, **kwargs):
+        """Shortcut to the UpdateRecurringPaymentsProfile method.
+        
+        ``profileid`` is the same profile id used for getting profile details.
+        
+        The keyed arguments are data in the payment profile which you wish to
+        change. The profileid does not change. Anything else will take the new
+        value. Most of, though not all of, the fields available are shared
+        with creating a profile, but for the complete list of parameters, you
+        can visit the following URI:
+        https://www.x.com/docs/DOC-1212
+        """
+        kwargs.update(locals())
+        del kwargs['self']
+        return self._call('UpdateRecurringPaymentsProfile', **kwargs)
