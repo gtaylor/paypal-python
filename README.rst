@@ -1,18 +1,20 @@
 PayPal-Python
 =============
 
-This package implements Paypal's Website Payments Pro NVP API in Python. This currently
-includes Direct Payments (Credit card payments without a PayPal Account) and
-PayPal Express Checkout (Payment via a PayPal account).
+This package implements Paypal's Website Payments Pro NVP API in Python. 
+This currently includes Direct Payments (Credit card payments without a PayPal 
+Account) and PayPal Express Checkout (Payment via a PayPal account).
 
 This module is best used in conjunction with the 
-[official PayPal Documentation](https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/howto_api_reference). Specifically, the NVP operations, under 
-"Website Payments Pro and Express Checkout API Operations".
+official PayPal `documentation`_. The stuff under
+"Website Payments Pro and Express Checkout API Operations". in particular.
 
 paypal-python does no real validation, doesn't hold hands, and is generally
 only going to handle authentication, http-level stuff, and serializing
 a list of keyword arguments passed to the API methods. You'll need to
 read the official PayPal documentation for what key/values to pass.
+
+.. _documentation: https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/howto_api_reference
 
 *NOTE: This module is not created by, endorsed by, or in any way affiliated
 with PayPal.*
@@ -51,17 +53,9 @@ Support/Help
 ------------
 
 If you have any problems, questions, or ideas, feel free to post on our 
-[issue tracker](http://github.com/duointeractive/paypal-python/issues).
+`issue tracker`_.
 
-To-Do
------
-
-Also, the following methods don't do much yet, because Express Checkout hasn't 
-been implemented at all:
-
-    address_verify
-    do_authorization
-    get_express_checkout_details
+.. _issue tracker: http://github.com/duointeractive/paypal-python/issues)
 
 Addendum A
 ----------
