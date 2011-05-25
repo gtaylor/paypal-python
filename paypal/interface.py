@@ -262,30 +262,39 @@ class PayPalInterface(object):
         del kwargs['self']
         return self._call('DoDirectPayment', **kwargs)
 
-    def do_void(self, authorizationid, note=''):
+    def do_void(self, **kwargs):
         """Shortcut for the DoVoid method.
     
         Use the TRANSACTIONID from DoAuthorization, DoDirectPayment or
-        DoExpressCheckoutPayment for the ``authorizationid``.
-        """
-        args = locals()
-        del args['self']
-        return self._call('DoVoid', **args)
+        DoExpressCheckoutPayment for the ``AUTHORIZATIONID``.
 
-    def get_express_checkout_details(self, token):
-        """Shortcut for the GetExpressCheckoutDetails method.
+        Required Kwargs
+        ---------------
+        * AUTHORIZATIONID
         """
-        return self._call('GetExpressCheckoutDetails', token=token)
+        return self._call('DoVoid', **kwargs)
+
+    def get_express_checkout_details(self, **kwargs):
+        """Shortcut for the GetExpressCheckoutDetails method.
+
+        Required Kwargs
+        ---------------
+        * TOKEN
+        """
+        return self._call('GetExpressCheckoutDetails', **kwargs)
         
-    def get_transaction_details(self, transactionid):
+    def get_transaction_details(self, **kwargs):
         """Shortcut for the GetTransactionDetails method.
     
         Use the TRANSACTIONID from DoAuthorization, DoDirectPayment or
         DoExpressCheckoutPayment for the ``transactionid``.
+
+        Required Kwargs
+        ---------------
+
+        * TRANSACTIONID
         """
-        args = locals()
-        del args['self']
-        return self._call('GetTransactionDetails', **args)
+        return self._call('GetTransactionDetails', **kwargs)
 
     def set_express_checkout(self, **kwargs):
         """Start an Express checkout.
@@ -295,8 +304,8 @@ class PayPalInterface(object):
         then figure out where to redirect the user to for them to
         authorize the payment on PayPal's website.
 
-        Required Keys
-        -------------
+        Required Kwargs
+        ---------------
 
         * PAYMENTREQUEST_0_AMT
         * PAYMENTREQUEST_0_PAYMENTACTION
@@ -308,8 +317,8 @@ class PayPalInterface(object):
     def do_express_checkout_payment(self, **kwargs):
         """Finishes an Express checkout.
 
-        :param str token: The token that was returned earlier by
-            :meth:`set_express_checkout`. This identifies the transaction.
+        TOKEN is the token that was returned earlier by
+        :meth:`set_express_checkout`. This identifies the transaction.
 
         Required
         --------
