@@ -1,12 +1,18 @@
 PayPal-Python
 =============
 
-This package implements Python's Website Payments Pro in Python. This currently
+This package implements Paypal's Website Payments Pro NVP API in Python. This currently
 includes Direct Payments (Credit card payments without a PayPal Account) and
 PayPal Express Checkout (Payment via a PayPal account).
 
 This module is best used in conjunction with the 
-[official PayPal Documentation](https://www.x.com/community/ppx/documentation#wpp).
+[official PayPal Documentation](https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/howto_api_reference). Specifically, the NVP operations, under 
+"Website Payments Pro and Express Checkout API Operations".
+
+paypal-python does no real validation, doesn't hold hands, and is generally
+only going to handle authentication, http-level stuff, and serializing
+a list of keyword arguments passed to the API methods. You'll need to
+read the official PayPal documentation for what key/values to pass.
 
 *NOTE: This module is not created by, endorsed by, or in any way affiliated
 with PayPal.*
