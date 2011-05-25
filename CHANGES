@@ -1,5 +1,23 @@
 Changes introduced with each version.
 
+1.1.0
+-----
+This version addresses compatibility with the newer versions of the PayPal API
+by backing off on pre-query validation. PayPal's API error messages are
+the safest bet, as bad as they can be at times.
+
+Lots of cleanup, commenting, and creature comforts abound. Backwards-incompatible
+changes are prefixed with 'BIC'.
+
+* BIC: Removed the KEY_ERROR setting. Less complexity is better. (gtaylor)
+* Adding lots of logging, which users may attach to for debugging. (gtaylor)
+* Removed RESPONSE_KEYERROR. Wasn't being used. (gtaylor)
+* Removed DEBUG_LEVEL setting. Use Python logging. (gtaylor)
+* Removed some of the error checking on input values, as this
+  limits users to the old API versions. We'll have to rely
+  on PayPal's error messages being informative. (gtaylor)
+* Bumped the default API version protocol to 74.0, up from 53.0. (gtaylor)
+
 1.0.3
 -----
 * Python 2.5 compatibility. (Manik)
@@ -7,7 +25,7 @@ Changes introduced with each version.
 1.0.2
 -----
 * Documentation updates. (gtaylor)
-* We now distribute with a copy of the Apache License. (Greg)
+* We now distribute with a copy of the Apache License. (gtaylor)
 
 1.0.1
 -----

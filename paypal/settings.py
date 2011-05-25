@@ -4,8 +4,12 @@ This module contains config objects needed by paypal.interface.PayPalInterface.
 Most of this is transparent to the end developer, as the PayPalConfig object
 is instantiated by the PayPalInterface object.
 """
+import logging
+from pprint import pformat
 
 from paypal.exceptions import PayPalConfigError, PayPalError
+
+logger = logging.getLogger('paypal.settings')
 
 class PayPalConfig(object):
     """
@@ -36,7 +40,8 @@ class PayPalConfig(object):
         'production' : 'https://www.paypal.com/webscr',
     }
 
-    API_VERSION = "60.0"
+    # If no API version is specified, defaults to the latest API.
+    API_VERSION = '74.0'
 
     # Defaults. Used in the absence of user-specified values.
     API_ENVIRONMENT = 'sandbox'
@@ -56,19 +61,9 @@ class PayPalConfig(object):
     
     ACK_SUCCESS = "SUCCESS"
     ACK_SUCCESS_WITH_WARNING = "SUCCESSWITHWARNING"
-    
-    # 0 being no debugging, 1 being some, 2 being lots.
-    DEBUG_LEVEL = 0
 
     # In seconds. Depending on your setup, this may need to be higher.
     HTTP_TIMEOUT = 15
-    
-    RESPONSE_KEYERROR = "AttributeError"
-    
-    # When True, return an AttributeError when the user tries to get an
-    # attribute on the response that does not exist. If False or None,
-    # return None for non-existant attribs.
-    KEY_ERROR = True
 
     def __init__(self, **kwargs):
         """
@@ -105,6 +100,9 @@ class PayPalConfig(object):
                     raise PayPalConfigError('Missing in PayPalConfig: %s ' % arg)
                 setattr(self, arg, kwargs[arg])
                 
-        for arg in ('HTTP_TIMEOUT' , 'DEBUG_LEVEL' , 'RESPONSE_KEYERROR'):
+        for arg in ['HTTP_TIMEOUT']:
             if arg in kwargs:
                 setattr(self, arg, kwargs[arg])
+
+        logger.debug('PayPalConfig object instantiated with kwargs: %s' %
+            pformat(kwargs))

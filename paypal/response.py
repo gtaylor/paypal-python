@@ -5,9 +5,13 @@ PayPalResponse parsing and processing.
 try:
     from urlparse import parse_qs
 except ImportError:
+    # For Python 2.5 compatibility.
     from cgi import parse_qs
 
-import paypal.exceptions 
+import logging
+from pprint import pformat
+
+logger = logging.getLogger('paypal.response')
 
 class PayPalResponse(object):
     """
@@ -20,39 +24,59 @@ class PayPalResponse(object):
     def __init__(self, query_string, config):
         """
         query_string is the response from the API, in NVP format. This is
-        parseable by urlparse.parse_qs(), which sticks it into the self.raw
-        dict for retrieval by the user.
+        parseable by urlparse.parse_qs(), which sticks it into the
+        :attr:`raw` dict for retrieval by the user.
+
+        :param str query_string: The raw response from the API server.
+        :param PayPalConfig config: The config object that was used to send
+            the query that caused this response.
         """
         # A dict of NVP values. Don't access this directly, use
         # PayPalResponse.attribname instead. See self.__getattr__().
         self.raw = parse_qs(query_string)
         self.config = config
+        logger.debug("PayPal NVP API Response:\n%s" % self.__str__())
 
     def __str__(self):
-        return str(self.raw)
+        """
+        Returns a string representation of the PayPalResponse object, in
+        'pretty-print' format.
+
+        :rtype: str
+        :returns: A 'pretty' string representation of the response dict.
+        """
+        return pformat(self.raw)
 
     def __getattr__(self, key):
         """
         Handles the retrieval of attributes that don't exist on the object
-        already. This is used to get API response values.
+        already. This is used to get API response values. Handles some
+        convenience stuff like discarding case and checking the cgi/urlparsed
+        response value dict (self.raw).
+
+        :param str key: The response attribute to get a value for.
+        :rtype: str
+        :returns: The requested value from the API server's response.
         """
         # PayPal response names are always uppercase.
         key = key.upper()
         try:
             value = self.raw[key]
             if len(value) == 1:
+                # TODO: Figure out why we need this.
                 return value[0]
             return value
         except KeyError:
-            if self.config.KEY_ERROR:
-                raise AttributeError(self)
-            else:
-                return None
+            # The requested value wasn't returned in the response.
+            raise AttributeError(self)
                 
     def success(self):
         """
-        Checks for the presence of errors in the response. Returns True if
-        all is well, False otherwise.
+        Checks for the presence of errors in the response. Returns ``True`` if
+        all is well, ``False`` otherwise.
+
+        :rtype: bool
+        :returns ``True`` if PayPal says our query was successful.
         """
         return self.ack.upper() in (self.config.ACK_SUCCESS, 
                                     self.config.ACK_SUCCESS_WITH_WARNING)

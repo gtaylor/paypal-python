@@ -9,10 +9,14 @@ import types
 import socket
 import urllib
 import urllib2
+import logging
+from pprint import pformat
 
 from paypal.settings import PayPalConfig
 from paypal.response import PayPalResponse
 from paypal.exceptions import PayPalError, PayPalAPIResponseError
+
+logger = logging.getLogger('paypal.interface')
    
 class PayPalInterface(object):
     """
@@ -68,11 +72,13 @@ class PayPalInterface(object):
     
         ``kwargs`` will be a hash of
         """
+        # Beware, this is a global setting.
         socket.setdefaulttimeout(self.config.HTTP_TIMEOUT)
-    
+
+        # This dict holds the key/value pairs to pass to the PayPal API.
         url_values = {
             'METHOD': method,
-            'VERSION': self.config.API_VERSION
+            'VERSION': self.config.API_VERSION,
         }
     
         headers = {}
@@ -88,30 +94,27 @@ class PayPalInterface(object):
             url_values['SUBJECT'] = self.config.SUBJECT
         # headers['X-PAYPAL-REQUEST-DATA-FORMAT'] = 'NV'
         # headers['X-PAYPAL-RESPONSE-DATA-FORMAT'] = 'NV'
-        # print(headers)
 
+        # All values passed to PayPal API must be uppercase.
         for key, value in kwargs.iteritems():
             url_values[key.upper()] = value
         
-        # When in DEBUG level 2 or greater, print out the NVP pairs.
-        if self.config.DEBUG_LEVEL >= 2:
-            k = url_values.keys()
-            k.sort()
-            for i in k:
-                print " %-20s : %s" % (i , url_values[i])
+        # This shows all of the key/val pairs we're sending to PayPal.
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug('PayPal NVP Query Key/Vals:\n%s' % pformat(url_values))
 
         url = self._encode_utf8(**url_values)
-
         data = urllib.urlencode(url)
         req = urllib2.Request(self.config.API_ENDPOINT, data, headers)
         response = PayPalResponse(urllib2.urlopen(req).read(), self.config)
 
-        if self.config.DEBUG_LEVEL >= 1:
-            print " %-20s : %s" % ("ENDPOINT", self.config.API_ENDPOINT)
+        logger.debug('PayPal NVP API Endpoint: %s'% self.config.API_ENDPOINT)
     
         if not response.success:
-            if self.config.DEBUG_LEVEL >= 1:
-                print response
+            logger.error('A PayPal API error was encountered.')
+            logger.error('PayPal NVP Query Key/Vals:\n%s' % pformat(url_values))
+            logger.error('PayPal NVP Query Response')
+            logger.error(response)
             raise PayPalAPIResponseError(response)
 
         return response
@@ -284,51 +287,52 @@ class PayPalInterface(object):
         del args['self']
         return self._call('GetTransactionDetails', **args)
 
-    def set_express_checkout(self, token='', **kwargs):
-        """Shortcut for the SetExpressCheckout method.
-            JV did not like the original method. found it limiting.
+    def set_express_checkout(self, **kwargs):
+        """Start an Express checkout.
+
+        You'll want to use this in conjunction with
+        :meth:`generate_express_checkout_redirect_url` to create a payment,
+        then figure out where to redirect the user to for them to
+        authorize the payment on PayPal's website.
+
+        Required Keys
+        -------------
+
+        * PAYMENTREQUEST_0_AMT
+        * PAYMENTREQUEST_0_PAYMENTACTION
+        * RETURNURL
+        * CANCELURL
         """
-        kwargs.update(locals())
-        del kwargs['self']
-        self._check_required(('amt',), **kwargs)
         return self._call('SetExpressCheckout', **kwargs)
 
-    def do_express_checkout_payment(self, token, **kwargs):
-        """Shortcut for the DoExpressCheckoutPayment method.
-        
-            Required
-                *TOKEN
-                PAYMENTACTION
-                PAYERID
-                AMT
-                
-            Optional
-                RETURNFMFDETAILS
-                GIFTMESSAGE
-                GIFTRECEIPTENABLE
-                GIFTWRAPNAME
-                GIFTWRAPAMOUNT
-                BUYERMARKETINGEMAIL
-                SURVEYQUESTION
-                SURVEYCHOICESELECTED
-                CURRENCYCODE
-                ITEMAMT
-                SHIPPINGAMT
-                INSURANCEAMT
-                HANDLINGAMT
-                TAXAMT
+    def do_express_checkout_payment(self, **kwargs):
+        """Finishes an Express checkout.
 
-            Optional + USEFUL
-                INVNUM - invoice number
+        :param str token: The token that was returned earlier by
+            :meth:`set_express_checkout`. This identifies the transaction.
+
+        Required
+        --------
+        * TOKEN
+        * PAYMENTACTION
+        * PAYERID
+        * AMT
                 
         """
-        kwargs.update(locals())
-        del kwargs['self']
-        self._check_required(('paymentaction', 'payerid'), **kwargs)
         return self._call('DoExpressCheckoutPayment', **kwargs)
         
     def generate_express_checkout_redirect_url(self, token):
-        """Submit token, get redirect url for client."""
+        """Returns the URL to redirect the user to for the Express checkout.
+
+        Express Checkouts must be verified by the customer by redirecting them
+        to the PayPal website. Use the token returned in the response from
+        :meth:`set_express_checkout` with this function to figure out where
+        to redirect the user to.
+
+        :param str token: The unique token identifying this transaction.
+        :rtype: str
+        :returns: The URL to redirect the user to for approval.
+        """
         url_vars = (self.config.PAYPAL_URL_BASE, token)
         return "%s?cmd=_express-checkout&token=%s" % url_vars
     
