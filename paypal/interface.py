@@ -83,17 +83,11 @@ class PayPalInterface(object):
     
         headers = {}
         if(self.config.API_AUTHENTICATION_MODE == "3TOKEN"):
-            # headers['X-PAYPAL-SECURITY-USERID'] = API_USERNAME
-            # headers['X-PAYPAL-SECURITY-PASSWORD'] = API_PASSWORD
-            # headers['X-PAYPAL-SECURITY-SIGNATURE'] = API_SIGNATURE
             url_values['USER'] = self.config.API_USERNAME
             url_values['PWD'] = self.config.API_PASSWORD
             url_values['SIGNATURE'] = self.config.API_SIGNATURE
         elif(self.config.API_AUTHENTICATION_MODE == "UNIPAY"):
-            # headers['X-PAYPAL-SECURITY-SUBJECT'] = SUBJECT
             url_values['SUBJECT'] = self.config.SUBJECT
-        # headers['X-PAYPAL-REQUEST-DATA-FORMAT'] = 'NV'
-        # headers['X-PAYPAL-RESPONSE-DATA-FORMAT'] = 'NV'
 
         # All values passed to PayPal API must be uppercase.
         for key, value in kwargs.iteritems():
