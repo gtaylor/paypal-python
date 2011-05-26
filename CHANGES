@@ -18,7 +18,7 @@ changes are prefixed with 'BIC'.
 * Removed some of the error checking on input values, as this
   limits users to the old API versions. We'll have to rely
   on PayPal's error messages being informative. (gtaylor)
-* Bumped the default API version protocol to 74.0, up from 53.0. (gtaylor)
+* Bumped the default API version protocol to 72.0, up from 53.0. (gtaylor)
 
 1.0.3
 -----

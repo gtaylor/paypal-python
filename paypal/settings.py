@@ -40,8 +40,7 @@ class PayPalConfig(object):
         'production' : 'https://www.paypal.com/webscr',
     }
 
-    # If no API version is specified, defaults to the latest API.
-    API_VERSION = '74.0'
+    API_VERSION = '72.0'
 
     # Defaults. Used in the absence of user-specified values.
     API_ENVIRONMENT = 'sandbox'
