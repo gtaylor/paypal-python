@@ -81,7 +81,6 @@ class PayPalInterface(object):
             'VERSION': self.config.API_VERSION,
         }
     
-        headers = {}
         if(self.config.API_AUTHENTICATION_MODE == "3TOKEN"):
             url_values['USER'] = self.config.API_USERNAME
             url_values['PWD'] = self.config.API_PASSWORD
@@ -99,7 +98,7 @@ class PayPalInterface(object):
 
         url = self._encode_utf8(**url_values)
         data = urllib.urlencode(url)
-        req = urllib2.Request(self.config.API_ENDPOINT, data, headers)
+        req = urllib2.Request(self.config.API_ENDPOINT, data)
         response = PayPalResponse(urllib2.urlopen(req).read(), self.config)
 
         logger.debug('PayPal NVP API Endpoint: %s'% self.config.API_ENDPOINT)
