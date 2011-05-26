@@ -10,6 +10,8 @@ Lots of cleanup, commenting, and creature comforts abound. Backwards-incompatibl
 changes are prefixed with 'BIC'.
 
 * BIC: Removed the KEY_ERROR setting. Less complexity is better. (gtaylor)
+* BIC: The 'token' position argument to do_express_checkout_payment
+  is no a keyword arg, for the sake of consistency. (gtaylor)
 * Adding lots of logging, which users may attach to for debugging. (gtaylor)
 * Removed RESPONSE_KEYERROR. Wasn't being used. (gtaylor)
 * Removed DEBUG_LEVEL setting. Use Python logging. (gtaylor)
