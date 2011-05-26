@@ -50,7 +50,7 @@ class PayPalAPIResponseError(PayPalError):
     """
     def __init__(self, response):
         self.response = response
-        self.error_code = int(response.L_ERRORCODE0)
-        self.message = response.L_LONGMESSAGE0
-        self.short_message = response.L_SHORTMESSAGE0
-        self.correlation_id = response.CORRELATIONID
+        self.error_code = int(getattr(response, 'L_ERRORCODE0', -1))
+        self.message = getattr(response, 'L_LONGMESSAGE0', None)
+        self.short_message = getattr(response, 'L_SHORTMESSAGE0', None)
+        self.correlation_id = getattr(response, 'CORRELATIONID', None)
