@@ -33,7 +33,7 @@ class TestExpressCheckout(unittest.TestCase):
         self.assertTrue(setexp_response)
         token = setexp_response.token
 
-        getexp_response = interface.get_express_checkout_details(token)
+        getexp_response = interface.get_express_checkout_details(token=token)
         
         # Redirect your client to this URL for approval.
         redir_url = interface.generate_express_checkout_redirect_url(token)
