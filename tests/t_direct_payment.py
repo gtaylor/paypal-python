@@ -29,7 +29,7 @@ class TestDirectPayment(unittest.TestCase):
         sale = interface.do_direct_payment('Sale', **self.credit_card)
         self.assertTrue(sale.success)
 
-        details = interface.get_transaction_details(sale.TRANSACTIONID)
+        details = interface.get_transaction_details(TRANSACTIONID=sale.TRANSACTIONID)
         self.assertTrue(details.success)
         self.assertEqual(details.PAYMENTSTATUS.upper(), 'COMPLETED')
         self.assertEqual(details.REASONCODE.upper(), 'NONE')
@@ -50,7 +50,7 @@ class TestDirectPayment(unittest.TestCase):
         sale = interface.do_direct_payment(**self.credit_card)
         self.assertTrue(sale.success)
 
-        details = interface.get_transaction_details(sale.TRANSACTIONID)
+        details = interface.get_transaction_details(TRANSACTIONID=sale.TRANSACTIONID)
         self.assertTrue(details.success)
         self.assertEqual(details.PAYMENTSTATUS.upper(), 'COMPLETED')
         self.assertEqual(details.REASONCODE.upper(), 'NONE')
@@ -76,11 +76,11 @@ class TestDirectPayment(unittest.TestCase):
 
         # void payment
         note = 'Voided the authorization.'
-        void = interface.do_void(auth.TRANSACTIONID, note)
+        void = interface.do_void(AUTHORIZATIONID=auth.TRANSACTIONID, NOTE=note)
         self.assertTrue(void.success)
         self.assertEqual(auth.TRANSACTIONID, void.AUTHORIZATIONID)
 
-        details = interface.get_transaction_details(auth.TRANSACTIONID)
+        details = interface.get_transaction_details(TRANSACTIONID=auth.TRANSACTIONID)
         self.assertTrue(details.success)
         self.assertEqual(details.PAYMENTSTATUS.upper(), 'VOIDED')
 
