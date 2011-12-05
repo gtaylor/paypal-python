@@ -97,9 +97,10 @@ class PayPalInterface(object):
             logger.debug('PayPal NVP Query Key/Vals:\n%s' % pformat(url_values))
 
         url = self._encode_utf8(**url_values)
-        data = urllib.urlencode(url)
+        data = urllib.urlencode(url).encode('utf-8')
         req = urllib2.Request(self.config.API_ENDPOINT, data)
-        response = PayPalResponse(urllib2.urlopen(req).read(), self.config)
+        response = PayPalResponse(urllib2.urlopen(req).read().decode('utf-8'),
+                                  self.config)
 
         logger.debug('PayPal NVP API Endpoint: %s'% self.config.API_ENDPOINT)
     
