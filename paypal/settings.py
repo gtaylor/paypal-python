@@ -5,6 +5,7 @@ Most of this is transparent to the end developer, as the PayPalConfig object
 is instantiated by the PayPalInterface object.
 """
 import logging
+import os
 from pprint import pformat
 
 from paypal.exceptions import PayPalConfigError, PayPalError
@@ -54,6 +55,10 @@ class PayPalConfig(object):
     # API Endpoints are just API server addresses.
     API_ENDPOINT = None
     PAYPAL_URL_BASE = None
+
+    # API Endpoint CA certificate chain
+    # (filename with path e.g. '/etc/ssl/certs/Verisign_Class_3_Public_Primary_Certification_Authority.pem')
+    API_CA_CERTS = None
     
     # UNIPAY credentials
     UNIPAY_SUBJECT = None
@@ -92,6 +97,13 @@ class PayPalConfig(object):
         self.API_ENDPOINT= self._API_ENDPOINTS[self.API_AUTHENTICATION_MODE][self.API_ENVIRONMENT]
         self.PAYPAL_URL_BASE= self._PAYPAL_URL_BASE[self.API_ENVIRONMENT]        
         
+        # Set the CA_CERTS location
+        if 'API_CA_CERTS' not in kwargs:
+            kwargs['API_CA_CERTS']= self.API_CA_CERTS
+        if kwargs['API_CA_CERTS'] and not os.path.exists(kwargs['API_CA_CERTS']):
+            raise PayPalConfigError('Invalid API_CA_CERTS')
+        self.API_CA_CERTS = kwargs['API_CA_CERTS']
+
         # set the 3TOKEN required fields
         if self.API_AUTHENTICATION_MODE == '3TOKEN':
             for arg in ('API_USERNAME','API_PASSWORD','API_SIGNATURE'):
