@@ -15,6 +15,7 @@ from pprint import pformat
 from paypal.settings import PayPalConfig
 from paypal.response import PayPalResponse
 from paypal.exceptions import PayPalError, PayPalAPIResponseError
+from paypal.https_connection import CertValidatingHTTPSHandler
 
 logger = logging.getLogger('paypal.interface')
    
@@ -40,7 +41,7 @@ class PayPalInterface(object):
         else:
             # Take the kwargs and stuff them in a new PayPalConfig object.
             self.config = PayPalConfig(**kwargs)
-        
+
     def _encode_utf8(self, **kwargs):
         """
         UTF8 encodes all of the NVP values.
@@ -99,7 +100,20 @@ class PayPalInterface(object):
         url = self._encode_utf8(**url_values)
         data = urllib.urlencode(url).encode('utf-8')
         req = urllib2.Request(self.config.API_ENDPOINT, data)
-        response = PayPalResponse(urllib2.urlopen(req).read().decode('utf-8'),
+
+        # If certificate provided build an opener that will validate PayPal server cert
+        if self.config.API_CA_CERTS:
+            handler = CertValidatingHTTPSHandler(ca_certs=self.config.API_CA_CERTS)
+            opener = urllib2.build_opener(handler)
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug('Validating PayPal server with certificate:\n%s\n' % self.config.API_CA_CERTS)
+        else:
+            opener = urllib2.build_opener()
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug('Skipping PayPal server certificate validation')
+
+        # Call paypal API
+        response = PayPalResponse(opener.open(req).read().decode('utf-8'),
                                   self.config)
 
         logger.debug('PayPal NVP API Endpoint: %s'% self.config.API_ENDPOINT)
