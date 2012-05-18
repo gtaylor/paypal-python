@@ -10,6 +10,7 @@ class PayPalError(Exception):
     specific exception classes below.
     """
     def __init__(self, message, error_code=None):
+        Exception.__init__(message, error_code)
         self.message = message
         self.error_code = error_code
 
@@ -18,20 +19,6 @@ class PayPalError(Exception):
             return "%s (Error Code: %s)" % (repr(self.message), self.error_code)
         else:
             return repr(self.message)
-        
-    def _get_message(self): 
-        """
-        get the message from error
-        """
-        return self._message
-
-    def _set_message(self, message): 
-        """
-        set the message from error
-        """
-        self._message = message
-        
-    message = property(_get_message, _set_message)
 
 
 class PayPalConfigError(PayPalError):
@@ -54,3 +41,5 @@ class PayPalAPIResponseError(PayPalError):
         self.message = getattr(response, 'L_LONGMESSAGE0', None)
         self.short_message = getattr(response, 'L_SHORTMESSAGE0', None)
         self.correlation_id = getattr(response, 'CORRELATIONID', None)
+
+        super(PayPalAPIResponseError, self).__init__(self.message, self.error_code)

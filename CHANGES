@@ -11,6 +11,9 @@ Changes introduced with each version.
   in the ``tests`` directory for details.
 * Added the ``bm_create_button`` method, which maps to BMCreateButton.
 * UniPay should be working again.
+* All of the PayPal exceptions now correctly call Exception.__init__. This will
+  prevent some edge cases with those using something like Sentry for error
+  reporting.
 
 1.1.0
 -----
