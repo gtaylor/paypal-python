@@ -8,7 +8,7 @@ import logging
 import os
 from pprint import pformat
 
-from paypal.exceptions import PayPalConfigError, PayPalError
+from paypal.exceptions import PayPalConfigError
 
 logger = logging.getLogger('paypal.settings')
 
@@ -21,8 +21,8 @@ class PayPalConfig(object):
     """
     # Used to validate correct values for certain config directives.
     _valid_= {
-        'API_ENVIRONMENT' : ['sandbox','production'],
-        'API_AUTHENTICATION_MODE' : ['3TOKEN','CERTIFICATE'],
+        'API_ENVIRONMENT' : ['sandbox', 'production'],
+        'API_AUTHENTICATION_MODE' : ['3TOKEN', 'CERTIFICATE'],
     }
 
     # Various API servers.
@@ -56,9 +56,11 @@ class PayPalConfig(object):
     API_ENDPOINT = None
     PAYPAL_URL_BASE = None
 
-    # API Endpoint CA certificate chain
-    # (filename with path e.g. '/etc/ssl/certs/Verisign_Class_3_Public_Primary_Certification_Authority.pem')
-    API_CA_CERTS = None
+    # API Endpoint CA certificate chain. If this is True, do a simple SSL
+    # certificate check on the endpoint. If it's a full path, verify against
+    # a private cert.
+    # e.g. '/etc/ssl/certs/Verisign_Class_3_Public_Primary_Certification_Authority.pem'
+    API_CA_CERTS = True
     
     # UNIPAY credentials
     UNIPAY_SUBJECT = None
@@ -67,7 +69,7 @@ class PayPalConfig(object):
     ACK_SUCCESS_WITH_WARNING = "SUCCESSWITHWARNING"
 
     # In seconds. Depending on your setup, this may need to be higher.
-    HTTP_TIMEOUT = 15
+    HTTP_TIMEOUT = 15.0
 
     def __init__(self, **kwargs):
         """
@@ -79,30 +81,38 @@ class PayPalConfig(object):
         are applied for certain directives in the absence of
         user-provided values.
         """
-        if 'API_ENVIRONMENT' not in kwargs:
-            kwargs['API_ENVIRONMENT']= self.API_ENVIRONMENT
-        # Make sure the environment is one of the acceptable values.
-        if kwargs['API_ENVIRONMENT'] not in self._valid_['API_ENVIRONMENT']:
-            raise PayPalConfigError('Invalid API_ENVIRONMENT')
-        self.API_ENVIRONMENT = kwargs['API_ENVIRONMENT']
+        if kwargs.get('API_ENVIRONMENT'):
+            api_environment = kwargs['API_ENVIRONMENT'].upper()
+            # Make sure the environment is one of the acceptable values.
+            if api_environment not in self._valid_['API_ENVIRONMENT']:
+                raise PayPalConfigError('Invalid API_ENVIRONMENT')
+            else:
+                self.API_ENVIRONMENT = api_environment
 
-        if 'API_AUTHENTICATION_MODE' not in kwargs:
-            kwargs['API_AUTHENTICATION_MODE']= self.API_AUTHENTICATION_MODE
-        # Make sure the auth mode is one of the known/implemented methods.
-        if kwargs['API_AUTHENTICATION_MODE'] not in self._valid_['API_AUTHENTICATION_MODE']:
-            raise PayPalConfigError("Not a supported auth mode. Use one of: %s" % \
-                           ", ".join(self._valid_['API_AUTHENTICATION_MODE']))
+        if kwargs.get('API_AUTHENTICATION_MODE'):
+            auth_mode = kwargs['API_AUTHENTICATION_MODE'].upper()
+            # Make sure the auth mode is one of the known/implemented methods.
+            if auth_mode not in self._valid_['API_AUTHENTICATION_MODE']:
+                choices = ", ".join(self._valid_['API_AUTHENTICATION_MODE'])
+                raise PayPalConfigError(
+                    "Not a supported auth mode. Use one of: %s" % choices
+                )
+            else:
+                self.API_AUTHENTICATION_MODE = auth_mode
         
         # Set the API endpoints, which is a cheesy way of saying API servers.
         self.API_ENDPOINT= self._API_ENDPOINTS[self.API_AUTHENTICATION_MODE][self.API_ENVIRONMENT]
         self.PAYPAL_URL_BASE= self._PAYPAL_URL_BASE[self.API_ENVIRONMENT]        
         
-        # Set the CA_CERTS location
-        if 'API_CA_CERTS' not in kwargs:
-            kwargs['API_CA_CERTS']= self.API_CA_CERTS
-        if kwargs['API_CA_CERTS'] and not os.path.exists(kwargs['API_CA_CERTS']):
-            raise PayPalConfigError('Invalid API_CA_CERTS')
-        self.API_CA_CERTS = kwargs['API_CA_CERTS']
+        # Set the CA_CERTS location. This can either be a None, a bool, or a
+        # string path.
+        if kwargs.get('API_CA_CERTS'):
+            self.API_CA_CERTS = kwargs['API_CA_CERTS']
+
+            if isinstance(self.API_CA_CERTS, basestring) and \
+               not os.path.exists(self.API_CA_CERTS):
+                # A CA Cert path was specified, but it's invalid.
+                raise PayPalConfigError('Invalid API_CA_CERTS')
 
         # set the 3TOKEN required fields
         if self.API_AUTHENTICATION_MODE == '3TOKEN':
@@ -115,5 +125,6 @@ class PayPalConfig(object):
             if arg in kwargs:
                 setattr(self, arg, kwargs[arg])
 
-        logger.debug('PayPalConfig object instantiated with kwargs: %s' %
-            pformat(kwargs))
+        logger.debug(
+            'PayPalConfig object instantiated with kwargs: %s' % pformat(kwargs)
+        )

@@ -6,16 +6,15 @@ with it.
 """
 
 import types
-import socket
 import urllib
-import urllib2
 import logging
 from pprint import pformat
+
+import requests
 
 from paypal.settings import PayPalConfig
 from paypal.response import PayPalResponse
 from paypal.exceptions import PayPalError, PayPalAPIResponseError
-from paypal.https_connection import CertValidatingHTTPSHandler
 
 logger = logging.getLogger('paypal.interface')
    
@@ -73,21 +72,18 @@ class PayPalInterface(object):
     
         ``kwargs`` will be a hash of
         """
-        # Beware, this is a global setting.
-        socket.setdefaulttimeout(self.config.HTTP_TIMEOUT)
-
         # This dict holds the key/value pairs to pass to the PayPal API.
         url_values = {
             'METHOD': method,
             'VERSION': self.config.API_VERSION,
         }
     
-        if(self.config.API_AUTHENTICATION_MODE == "3TOKEN"):
+        if self.config.API_AUTHENTICATION_MODE == "3TOKEN":
             url_values['USER'] = self.config.API_USERNAME
             url_values['PWD'] = self.config.API_PASSWORD
             url_values['SIGNATURE'] = self.config.API_SIGNATURE
-        elif(self.config.API_AUTHENTICATION_MODE == "UNIPAY"):
-            url_values['SUBJECT'] = self.config.SUBJECT
+        elif self.config.API_AUTHENTICATION_MODE == "UNIPAY":
+            url_values['SUBJECT'] = self.config.UNIPAY_SUBJECT
 
         # All values passed to PayPal API must be uppercase.
         for key, value in kwargs.iteritems():
@@ -97,24 +93,15 @@ class PayPalInterface(object):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('PayPal NVP Query Key/Vals:\n%s' % pformat(url_values))
 
-        url = self._encode_utf8(**url_values)
-        data = urllib.urlencode(url).encode('utf-8')
-        req = urllib2.Request(self.config.API_ENDPOINT, data)
-
-        # If certificate provided build an opener that will validate PayPal server cert
-        if self.config.API_CA_CERTS:
-            handler = CertValidatingHTTPSHandler(ca_certs=self.config.API_CA_CERTS)
-            opener = urllib2.build_opener(handler)
-            if logger.isEnabledFor(logging.DEBUG):
-                logger.debug('Validating PayPal server with certificate:\n%s\n' % self.config.API_CA_CERTS)
-        else:
-            opener = urllib2.build_opener()
-            if logger.isEnabledFor(logging.DEBUG):
-                logger.debug('Skipping PayPal server certificate validation')
+        req = requests.get(
+            self.config.API_ENDPOINT,
+            params=url_values,
+            timeout=self.config.HTTP_TIMEOUT,
+            verify=self.config.API_CA_CERTS,
+        )
 
         # Call paypal API
-        response = PayPalResponse(opener.open(req).read().decode('utf-8'),
-                                  self.config)
+        response = PayPalResponse(req.text, self.config)
 
         logger.debug('PayPal NVP API Endpoint: %s'% self.config.API_ENDPOINT)
     

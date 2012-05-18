@@ -3,12 +3,18 @@ Changes introduced with each version.
 1.2.0
 -----
 
+* Replacing urllib2 with python-requests. Greatly simplifies things, and
+  improves SSL certificate validation.
+* SSL certificate validation is now enabled by default. The old behvaior of
+  being able to specify a private cert to validate against still remains.
 * Tests are now ran via nose. The old test runner is no more. See the README
   in the ``tests`` directory for details.
 * Added the ``bm_create_button`` method, which maps to BMCreateButton.
+* UniPay should be working again.
 
 1.1.0
 -----
+
 This version addresses compatibility with the newer versions of the PayPal API
 by backing off on pre-query validation. PayPal's API error messages are
 the safest bet, as bad as they can be at times.
@@ -29,15 +35,18 @@ changes are prefixed with 'BIC'.
 
 1.0.3
 -----
+
 * Python 2.5 compatibility. (Manik)
 
 1.0.2
 -----
+
 * Documentation updates. (gtaylor)
 * We now distribute with a copy of the Apache License. (gtaylor)
 
 1.0.1
 -----
+
 * Misc. more specific imports to avoid import errors. (grigouze)
 * Fixes to country test suite. (grigouze)
 * Added a countries module that has all of the countries PayPal supports. (gtaylor)
