@@ -3,7 +3,10 @@ Changes introduced with each version.
 1.2.0
 -----
 
-* Minimum supported Python version is now 2.6.
+* Minimum supported Python version is now 2.6. It may still work with
+  Python 2.5, but I am not hugely interested in maintaining support. Pull
+  requests are accepted, of course, but breakages in future releases may happen,
+  because I won't be testing against 2.5.
 * Replacing urllib2 with python-requests. Greatly simplifies things, and
   improves SSL certificate validation.
 * Preliminary (potentially rough) Python 3 support.
