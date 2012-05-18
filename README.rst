@@ -37,9 +37,10 @@ or download the source, un-tar/un-zip it, cd into paypal-python, and:
 Quick Start
 -----------
 
-To run test suite:
-    
-    python tests/runner.py
+To run test suite, do from within the paypal-python directory:
+
+    pip install nose
+    nosetests tests/
 
 The meat is in paypal.interface. The docs are in the docstrings and tests.
 
@@ -106,6 +107,7 @@ LICENSE
 -------
 
 Copyright 2009 Pat Collins <pat@burned.com>
+Copyright 2012 DUO Interactive, LLC <gtaylor@duointeractive.com>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

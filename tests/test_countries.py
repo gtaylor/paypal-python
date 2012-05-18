@@ -1,7 +1,6 @@
 # coding=utf-8
 
 import unittest
-import interface_factory
 from paypal import countries
 
 class TestCountries(unittest.TestCase):
@@ -18,6 +17,3 @@ class TestCountries(unittest.TestCase):
         self.assertEqual(us_fullval, countries.get_name_from_abbrev('us'))
         self.assertRaises(KeyError, countries.get_name_from_abbrev, 'us',
                          case_sensitive=True)
-
-if __name__ == '__main__':
-    unittest.main()

@@ -63,7 +63,9 @@ class PayPalResponse(object):
         try:
             value = self.raw[key]
             if len(value) == 1:
-                # TODO: Figure out why we need this.
+                # For some reason, PayPal returns lists for all of the values.
+                # I'm not positive as to why, so we'll just take the first
+                # of each one. Hasn't failed us so far.
                 return value[0]
             return value
         except KeyError:

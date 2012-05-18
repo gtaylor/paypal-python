@@ -83,6 +83,3 @@ class TestDirectPayment(unittest.TestCase):
         details = interface.get_transaction_details(TRANSACTIONID=auth.TRANSACTIONID)
         self.assertTrue(details.success)
         self.assertEqual(details.PAYMENTSTATUS.upper(), 'VOIDED')
-
-if __name__ == '__main__':
-    unittest.main()

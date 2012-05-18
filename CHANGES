@@ -1,5 +1,12 @@
 Changes introduced with each version.
 
+1.2.0
+-----
+
+* Tests are now ran via nose. The old test runner is no more. See the README
+  in the ``tests`` directory for details.
+* Added the ``bm_create_button`` method, which maps to BMCreateButton.
+
 1.1.0
 -----
 This version addresses compatibility with the newer versions of the PayPal API
