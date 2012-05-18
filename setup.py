@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 import re
+from setuptools import setup
 
 VERSION_PATTERN = re.compile(r'VERSION\s*=\s*(.*)$', re.I)
 VERSION = VERSION_PATTERN.search(open('paypal/__init__.py').read()) \
                          .groups()[0].strip().strip('\'"')
-
-from setuptools import setup
 
 LONG_DESCRIPTION = \
 """An implementation of PayPal's API in Python. Currently features Direct
