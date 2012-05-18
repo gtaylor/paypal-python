@@ -6,7 +6,6 @@ with it.
 """
 
 import types
-import urllib
 import logging
 from pprint import pformat
 
@@ -15,6 +14,13 @@ import requests
 from paypal.settings import PayPalConfig
 from paypal.response import PayPalResponse
 from paypal.exceptions import PayPalError, PayPalAPIResponseError
+from paypal.compat import is_py3
+
+if is_py3:
+    #noinspection PyUnresolvedReferences
+    import urllib.parse
+else:
+    import urllib
 
 logger = logging.getLogger('paypal.interface')
    
@@ -45,8 +51,14 @@ class PayPalInterface(object):
         """
         UTF8 encodes all of the NVP values.
         """
+        if is_py3:
+            # This is only valid for Python 2. In Python 3, unicode is
+            # everywhere (yay).
+            return kwargs
+
         unencoded_pairs = kwargs
         for i in unencoded_pairs.keys():
+            #noinspection PyUnresolvedReferences
             if isinstance(unencoded_pairs[i], types.UnicodeType):
                 unencoded_pairs[i] = unencoded_pairs[i].encode('utf-8')
         return unencoded_pairs
@@ -86,7 +98,7 @@ class PayPalInterface(object):
             url_values['SUBJECT'] = self.config.UNIPAY_SUBJECT
 
         # All values passed to PayPal API must be uppercase.
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             url_values[key.upper()] = value
         
         # This shows all of the key/val pairs we're sending to PayPal.
@@ -349,7 +361,12 @@ class PayPalInterface(object):
         self._check_required(required_vals, **kwargs)
         url = "%s?cmd=_cart&upload=1" % self.config.PAYPAL_URL_BASE
         additional = self._encode_utf8(**kwargs)
-        additional = urllib.urlencode(additional)
+        if is_py3:
+            #noinspection PyUnresolvedReferences
+            additional = urllib.parse.urlencode(additional)
+        else:
+            #noinspection PyUnresolvedReferences
+            additional = urllib.urlencode(additional)
         return url + "&" + additional
     
     def get_recurring_payments_profile_details(self, profileid):

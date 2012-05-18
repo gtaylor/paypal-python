@@ -2,12 +2,13 @@
 
 import unittest
 from paypal import PayPalAPIResponseError
-import interface_factory
-import api_details
+from . import interface_factory
+from . import api_details
 
 interface = interface_factory.get_interface_obj()
 
 class TestDirectPayment(unittest.TestCase):
+
     def setUp(self):
         self.credit_card = {
             'amt': '10.00',

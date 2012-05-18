@@ -1,7 +1,7 @@
 # coding=utf-8
 
 import unittest
-import interface_factory
+from . import interface_factory
 
 interface = interface_factory.get_interface_obj()
 

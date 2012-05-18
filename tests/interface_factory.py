@@ -6,6 +6,7 @@ getting modified.
 
 See get_interface_obj() below, as well as the README in this tests directory.
 """
+
 import sys
 import os
 
@@ -18,9 +19,9 @@ if not project_root_dir in sys.path:
 from paypal import PayPalInterface
 
 try:
-    import api_details
+    from tests import api_details
 except ImportError:
-    print """
+    print("""
     ERROR: No api_details.py file exists in your paypal/tests directory. Please 
     copy api_details_blank.py to api_details.py and modify the values to your 
     own API developer _test_ credentials.
@@ -29,7 +30,7 @@ except ImportError:
     
         https://developer.paypal.com
     
-    """
+    """)
     sys.exit(1)
 
 def get_interface_obj():

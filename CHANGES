@@ -3,8 +3,10 @@ Changes introduced with each version.
 1.2.0
 -----
 
+* Minimum supported Python version is now 2.6.
 * Replacing urllib2 with python-requests. Greatly simplifies things, and
   improves SSL certificate validation.
+* Preliminary (potentially rough) Python 3 support.
 * SSL certificate validation is now enabled by default. The old behvaior of
   being able to specify a private cert to validate against still remains.
 * Tests are now ran via nose. The old test runner is no more. See the README

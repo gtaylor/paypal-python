@@ -1,15 +1,13 @@
 # coding=utf-8
 
 import unittest
-import interface_factory
-import api_details
+from . import interface_factory
+from . import api_details
 
 interface = interface_factory.get_interface_obj()
 
-# TODO: implement the paypal account log-in as web-based? somehow implement with
-# a bare-bones python web client so it's programmable?
-
 class TestExpressCheckout(unittest.TestCase):
+
     def setUp(self):
         self.returnurl = 'http://www.paypal.com'
         self.cancelurl = 'http://www.ebay.com'
@@ -69,6 +67,3 @@ class TestExpressCheckout(unittest.TestCase):
             A call to `DoVoid`.
         """
         pass
-
-if __name__ == '__main__':
-    unittest.main()

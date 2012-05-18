@@ -8,6 +8,7 @@ import logging
 import os
 from pprint import pformat
 
+from paypal.compat import basestring
 from paypal.exceptions import PayPalConfigError
 
 logger = logging.getLogger('paypal.settings')

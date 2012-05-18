@@ -2,14 +2,24 @@
 """
 PayPalResponse parsing and processing.
 """
-try:
-    from urlparse import parse_qs
-except ImportError:
-    # For Python 2.5 compatibility.
-    from cgi import parse_qs
-
 import logging
 from pprint import pformat
+
+from paypal.compat import is_py3, is_py25
+
+if is_py3:
+    #noinspection PyUnresolvedReferences
+    import urllib.parse
+    #noinspection PyUnresolvedReferences
+    parse_qs = urllib.parse.parse_qs
+elif is_py25:
+    import cgi
+    #noinspection PyUnresolvedReferences, PyDeprecation
+    parse_qs = cgi.parse_qs
+else:
+    import urllib
+    #noinspection PyUnresolvedReferences, PyDeprecation
+    parse_qs = urllib.parse_qs
 
 logger = logging.getLogger('paypal.response')
 

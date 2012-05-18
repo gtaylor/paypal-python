@@ -10,7 +10,7 @@ class PayPalError(Exception):
     specific exception classes below.
     """
     def __init__(self, message, error_code=None):
-        Exception.__init__(message, error_code)
+        Exception.__init__(self, message, error_code)
         self.message = message
         self.error_code = error_code
 

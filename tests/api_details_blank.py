@@ -12,12 +12,11 @@ CONFIG = PayPalConfig(API_USERNAME = "xxx_xxx_apix.xxx.com",
                       API_SIGNATURE = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
                       DEBUG_LEVEL=0)
 
-"""
-The following values may be found by visiting https://developer.paypal.com/,
-clicking on the 'Test Accounts' navbar link in the sandbox, and looking at
-the accounts listed there. You'll need a business and a personal account
-created to run these tests.
-"""
+# The following values may be found by visiting https://developer.paypal.com/,
+# clicking on the 'Test Accounts' navbar link in the sandbox, and looking at
+# the accounts listed there. You'll need a business and a personal account
+# created to run these tests.
+
 # The email address of your personal test account. This is typically the
 # customer for these tests.
 EMAIL_PERSONAL = 'custX_xxxxxxxxxx_per@xxxxxxxx.com'
