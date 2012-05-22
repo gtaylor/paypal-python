@@ -17,9 +17,11 @@ elif is_py25:
     #noinspection PyUnresolvedReferences, PyDeprecation
     parse_qs = cgi.parse_qs
 else:
-    import urllib
+    # Python 2.6 and up (but not 3.0) have urlparse.parse_qs, which is copied
+    # from Python 2.5's cgi.parse_qs.
+    import urlparse
     #noinspection PyUnresolvedReferences, PyDeprecation
-    parse_qs = urllib.parse_qs
+    parse_qs = urlparse.parse_qs
 
 logger = logging.getLogger('paypal.response')
 
