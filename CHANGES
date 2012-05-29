@@ -19,6 +19,8 @@ Changes introduced with each version.
 * All of the PayPal exceptions now correctly call Exception.__init__. This will
   prevent some edge cases with those using something like Sentry for error
   reporting.
+* Improved the settings module logic. Also added validation to make sure
+  correct settings are being passed in.
 
 1.1.0
 -----
