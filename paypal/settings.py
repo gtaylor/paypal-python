@@ -32,20 +32,20 @@ class PayPalConfig(object):
         # authentication, which uses different servers, but that's not
         # implemented.
         '3TOKEN': {
-            'sandbox' : 'https://api-3t.sandbox.paypal.com/nvp',
-            'production' : 'https://api-3t.paypal.com/nvp',
+            'SANDBOX' : 'https://api-3t.sandbox.paypal.com/nvp',
+            'PRODUCTION' : 'https://api-3t.paypal.com/nvp',
         }
     }
 
     _PAYPAL_URL_BASE= {
-        'sandbox' : 'https://www.sandbox.paypal.com/webscr',
-        'production' : 'https://www.paypal.com/webscr',
+        'SANDBOX' : 'https://www.sandbox.paypal.com/webscr',
+        'PRODUCTION' : 'https://www.paypal.com/webscr',
     }
 
     API_VERSION = '72.0'
 
     # Defaults. Used in the absence of user-specified values.
-    API_ENVIRONMENT = 'sandbox'
+    API_ENVIRONMENT = 'SANDBOX'
     API_AUTHENTICATION_MODE = '3TOKEN'
 
     # 3TOKEN credentials
