@@ -83,6 +83,24 @@ class PayPalResponse(object):
         except KeyError:
             # The requested value wasn't returned in the response.
             raise AttributeError(self)
+
+    def __getitem__(self, key):
+        """
+        Another (dict-style) means of accessing response data.
+
+        :param str key: The response key to get a value for.
+        :rtype: str
+        :returns: The requested value from the API server's response.
+        """
+        # PayPal response names are always uppercase.
+        key = key.upper()
+        value = self.raw[key]
+        if len(value) == 1:
+            # For some reason, PayPal returns lists for all of the values.
+            # I'm not positive as to why, so we'll just take the first
+            # of each one. Hasn't failed us so far.
+            return value[0]
+        return value
                 
     def success(self):
         """
