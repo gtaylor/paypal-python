@@ -22,7 +22,7 @@ class PayPalConfig(object):
     """
     # Used to validate correct values for certain config directives.
     _valid_= {
-        'API_ENVIRONMENT' : ['sandbox', 'production'],
+        'API_ENVIRONMENT' : ['SANDBOX', 'PRODUCTION'],
         'API_AUTHENTICATION_MODE' : ['3TOKEN', 'CERTIFICATE'],
     }
 
