@@ -73,17 +73,17 @@ class PayPalInterface(object):
             if req.lower() not in kwargs and req.upper() not in kwargs:
                 raise PayPalError('missing required : %s' % req)
 
-	def _sanitize_locals(self, data):
+    def _sanitize_locals(self, data):
         """
-		Remove the 'self' key in locals()
-		It's more explicit to do it in one function
-		"""
+        Remove the 'self' key in locals()
+        It's more explicit to do it in one function
+        """
         if 'self' in data:
             data = data.copy()
             del data['self']
 
-		return data
-        
+        return data
+
     def _call(self, method, **kwargs):
         """
         Wrapper method for executing all API commands over HTTP. This method is
