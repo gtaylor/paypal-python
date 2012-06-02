@@ -5,7 +5,7 @@ http://xml.coverpages.org/country3166.html
 
 A tuple of tuples of country codes and their full names. There are a few helper 
 functions provided if you'd rather not use the dict directly. Examples provided 
-in the t_countries.py unit tests.
+in the test_countries.py unit tests.
 """
 
 COUNTRY_TUPLES = (
