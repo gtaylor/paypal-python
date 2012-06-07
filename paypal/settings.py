@@ -21,13 +21,13 @@ class PayPalConfig(object):
     directives as keyword args.
     """
     # Used to validate correct values for certain config directives.
-    _valid_= {
+    _valid_ = {
         'API_ENVIRONMENT' : ['SANDBOX', 'PRODUCTION'],
         'API_AUTHENTICATION_MODE' : ['3TOKEN', 'CERTIFICATE'],
     }
 
     # Various API servers.
-    _API_ENDPOINTS= {
+    _API_ENDPOINTS = {
         # In most cases, you want 3-Token. There's also Certificate-based
         # authentication, which uses different servers, but that's not
         # implemented.
@@ -37,7 +37,7 @@ class PayPalConfig(object):
         }
     }
 
-    _PAYPAL_URL_BASE= {
+    _PAYPAL_URL_BASE = {
         'SANDBOX' : 'https://www.sandbox.paypal.com/webscr',
         'PRODUCTION' : 'https://www.paypal.com/webscr',
     }
@@ -102,8 +102,8 @@ class PayPalConfig(object):
                 self.API_AUTHENTICATION_MODE = auth_mode
         
         # Set the API endpoints, which is a cheesy way of saying API servers.
-        self.API_ENDPOINT= self._API_ENDPOINTS[self.API_AUTHENTICATION_MODE][self.API_ENVIRONMENT]
-        self.PAYPAL_URL_BASE= self._PAYPAL_URL_BASE[self.API_ENVIRONMENT]        
+        self.API_ENDPOINT = self._API_ENDPOINTS[self.API_AUTHENTICATION_MODE][self.API_ENVIRONMENT]
+        self.PAYPAL_URL_BASE = self._PAYPAL_URL_BASE[self.API_ENVIRONMENT]
         
         # Set the CA_CERTS location. This can either be a None, a bool, or a
         # string path.
@@ -117,7 +117,7 @@ class PayPalConfig(object):
 
         # set the 3TOKEN required fields
         if self.API_AUTHENTICATION_MODE == '3TOKEN':
-            for arg in ('API_USERNAME','API_PASSWORD','API_SIGNATURE'):
+            for arg in ('API_USERNAME', 'API_PASSWORD', 'API_SIGNATURE'):
                 if arg not in kwargs:
                     raise PayPalConfigError('Missing in PayPalConfig: %s ' % arg)
                 setattr(self, arg, kwargs[arg])

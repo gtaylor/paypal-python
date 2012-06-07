@@ -72,7 +72,18 @@ class PayPalInterface(object):
             # PayPal api is never mixed-case.
             if req.lower() not in kwargs and req.upper() not in kwargs:
                 raise PayPalError('missing required : %s' % req)
-        
+
+    def _sanitize_locals(self, data):
+        """
+        Remove the 'self' key in locals()
+        It's more explicit to do it in one function
+        """
+        if 'self' in data:
+            data = data.copy()
+            del data['self']
+
+        return data
+
     def _call(self, method, **kwargs):
         """
         Wrapper method for executing all API commands over HTTP. This method is
@@ -152,8 +163,7 @@ class PayPalInterface(object):
             Maximumstring length: 16 single-byte characters.
             Whitespace and case of input value are ignored.
         """
-        args = locals()
-        del args['self']
+        args = self._sanitize_locals(locals())
         return self._call('AddressVerify', **args)
     
     def create_recurring_payments_profile(self, **kwargs):
@@ -214,8 +224,7 @@ class PayPalInterface(object):
                 returned by `DoAuthorization`)
     
         """
-        args = locals()
-        del args['self']
+        args = self._sanitize_locals(locals())
         return self._call('DoAuthorization', **args)
 
     def do_capture(self, authorizationid, amt, completetype='Complete', **kwargs):
@@ -226,8 +235,7 @@ class PayPalInterface(object):
     
         The `amt` should be the same as the authorized transaction.
         """
-        kwargs.update(locals())
-        del kwargs['self']
+        kwargs.update(self._sanitize_locals(locals()))
         return self._call('DoCapture', **kwargs)
 
     def do_direct_payment(self, paymentaction="Sale", **kwargs):
@@ -265,8 +273,7 @@ class PayPalInterface(object):
             ...
             direct_payment(paymentaction="Sale", **charge)
         """
-        kwargs.update(locals())
-        del kwargs['self']
+        kwargs.update(self._sanitize_locals(locals()))
         return self._call('DoDirectPayment', **kwargs)
 
     def do_void(self, **kwargs):
@@ -387,8 +394,7 @@ class PayPalInterface(object):
         description of each field, visit the following URI:
         https://www.x.com/docs/DOC-1194 
         """
-        args = locals()
-        del args['self']
+        args = self._sanitize_locals(locals())
         return self._call('GetRecurringPaymentsProfileDetails', **args)
     
     def manage_recurring_payments_profile_status(self, profileid, action):
@@ -397,8 +403,7 @@ class PayPalInterface(object):
         ``profileid`` is the same profile id used for getting profile details.
         ``action`` should be either 'Cancel', 'Suspend', or 'Reactivate'.
         """
-        args = locals()
-        del args['self']
+        args = self._sanitize_locals(locals())
         return self._call('ManageRecurringPaymentsProfileStatus', **args)
     
     def update_recurring_payments_profile(self, profileid, **kwargs):
@@ -413,8 +418,7 @@ class PayPalInterface(object):
         can visit the following URI:
         https://www.x.com/docs/DOC-1212
         """
-        kwargs.update(locals())
-        del kwargs['self']
+        kwargs.update(self._sanitize_locals(locals()))
         return self._call('UpdateRecurringPaymentsProfile', **kwargs)
 
     def bm_create_button(self, **kwargs):
@@ -426,6 +430,5 @@ class PayPalInterface(object):
         The L_BUTTONVARn fields are especially important, so make sure to
         read those and act accordingly. See unit tests for some examples.
         """
-        kwargs.update(locals())
-        del kwargs['self']
+        kwargs.update(self._sanitize_locals(locals()))
         return self._call('BMCreateButton', **kwargs)
