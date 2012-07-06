@@ -21,10 +21,10 @@ class ButtonTests(unittest.TestCase):
             'BUTTONTYPE': 'BUYNOW',
             'BUTTONSUBTYPE': 'SERVICES',
             'BUYNOWTEXT': 'PAYNOW',
-            'LBUTTONVAR0': 'notify_url=http://test.com',
-            'LBUTTONVAR1': 'amount=5.00',
-            'LBUTTONVAR2': 'item_name=Testing',
-            'LBUTTONVAR3': 'item_number=12345',
+            'L_BUTTONVAR0': 'notify_url=http://test.com',
+            'L_BUTTONVAR1': 'amount=5.00',
+            'L_BUTTONVAR2': 'item_name=Testing',
+            'L_BUTTONVAR3': 'item_number=12345',
         }
         response = interface.bm_create_button(**button_params)
         self.assertEqual(response.ACK, 'Success')
