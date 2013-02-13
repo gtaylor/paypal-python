@@ -22,8 +22,8 @@ class PayPalConfig(object):
     """
     # Used to validate correct values for certain config directives.
     _valid_ = {
-        'API_ENVIRONMENT' : ['SANDBOX', 'PRODUCTION'],
-        'API_AUTHENTICATION_MODE' : ['3TOKEN', 'CERTIFICATE'],
+        'API_ENVIRONMENT': ['SANDBOX', 'PRODUCTION'],
+        'API_AUTHENTICATION_MODE': ['3TOKEN', 'CERTIFICATE'],
     }
 
     # Various API servers.
@@ -32,14 +32,14 @@ class PayPalConfig(object):
         # authentication, which uses different servers, but that's not
         # implemented.
         '3TOKEN': {
-            'SANDBOX' : 'https://api-3t.sandbox.paypal.com/nvp',
-            'PRODUCTION' : 'https://api-3t.paypal.com/nvp',
+            'SANDBOX': 'https://api-3t.sandbox.paypal.com/nvp',
+            'PRODUCTION': 'https://api-3t.paypal.com/nvp',
         }
     }
 
     _PAYPAL_URL_BASE = {
-        'SANDBOX' : 'https://www.sandbox.paypal.com/webscr',
-        'PRODUCTION' : 'https://www.paypal.com/webscr',
+        'SANDBOX': 'https://www.sandbox.paypal.com/webscr',
+        'PRODUCTION': 'https://www.paypal.com/webscr',
     }
 
     API_VERSION = '72.0'
@@ -62,10 +62,10 @@ class PayPalConfig(object):
     # a private cert.
     # e.g. '/etc/ssl/certs/Verisign_Class_3_Public_Primary_Certification_Authority.pem'
     API_CA_CERTS = True
-    
+
     # UNIPAY credentials
     UNIPAY_SUBJECT = None
-    
+
     ACK_SUCCESS = "SUCCESS"
     ACK_SUCCESS_WITH_WARNING = "SUCCESSWITHWARNING"
 
@@ -77,7 +77,7 @@ class PayPalConfig(object):
         PayPalConfig constructor. **kwargs catches all of the user-specified
         config directives at time of instantiation. It is fine to set these
         values post-instantiation, too.
-        
+
         Some basic validation for a few values is performed below, and defaults
         are applied for certain directives in the absence of
         user-provided values.
@@ -100,18 +100,17 @@ class PayPalConfig(object):
                 )
             else:
                 self.API_AUTHENTICATION_MODE = auth_mode
-        
+
         # Set the API endpoints, which is a cheesy way of saying API servers.
         self.API_ENDPOINT = self._API_ENDPOINTS[self.API_AUTHENTICATION_MODE][self.API_ENVIRONMENT]
         self.PAYPAL_URL_BASE = self._PAYPAL_URL_BASE[self.API_ENVIRONMENT]
-        
+
         # Set the CA_CERTS location. This can either be a None, a bool, or a
         # string path.
         if kwargs.get('API_CA_CERTS'):
             self.API_CA_CERTS = kwargs['API_CA_CERTS']
 
-            if isinstance(self.API_CA_CERTS, basestring) and \
-               not os.path.exists(self.API_CA_CERTS):
+            if isinstance(self.API_CA_CERTS, basestring) and not os.path.exists(self.API_CA_CERTS):
                 # A CA Cert path was specified, but it's invalid.
                 raise PayPalConfigError('Invalid API_CA_CERTS')
 
@@ -121,7 +120,7 @@ class PayPalConfig(object):
                 if arg not in kwargs:
                     raise PayPalConfigError('Missing in PayPalConfig: %s ' % arg)
                 setattr(self, arg, kwargs[arg])
-                
+
         for arg in ['HTTP_TIMEOUT']:
             if arg in kwargs:
                 setattr(self, arg, kwargs[arg])
