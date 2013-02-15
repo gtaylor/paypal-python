@@ -29,7 +29,7 @@ class PayPalResponse(object):
     """
     Parse and prepare the reponse from PayPal's API. Acts as somewhat of a
     glorified dictionary for API responses.
-    
+
     NOTE: Don't access self.raw directly. Just do something like
     PayPalResponse.someattr, going through PayPalResponse.__getattr__().
     """
@@ -101,7 +101,7 @@ class PayPalResponse(object):
             # of each one. Hasn't failed us so far.
             return value[0]
         return value
-                
+
     def success(self):
         """
         Checks for the presence of errors in the response. Returns ``True`` if
@@ -110,6 +110,6 @@ class PayPalResponse(object):
         :rtype: bool
         :returns ``True`` if PayPal says our query was successful.
         """
-        return self.ack.upper() in (self.config.ACK_SUCCESS, 
+        return self.ack.upper() in (self.config.ACK_SUCCESS,
                                     self.config.ACK_SUCCESS_WITH_WARNING)
     success = property(success)

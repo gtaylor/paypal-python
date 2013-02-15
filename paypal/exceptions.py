@@ -31,7 +31,7 @@ class PayPalConfigError(PayPalError):
 class PayPalAPIResponseError(PayPalError):
     """
     Raised when there is an error coming back with a PayPal NVP API response.
-    
+
     Pipe the error message from the API to the exception, along with
     the error code.
     """

@@ -3,8 +3,8 @@ Country Code List: ISO 3166-1993 (E)
 
 http://xml.coverpages.org/country3166.html
 
-A tuple of tuples of country codes and their full names. There are a few helper 
-functions provided if you'd rather not use the dict directly. Examples provided 
+A tuple of tuples of country codes and their full names. There are a few helper
+functions provided if you'd rather not use the dict directly. Examples provided
 in the test_countries.py unit tests.
 """
 
@@ -254,27 +254,27 @@ def is_valid_country_abbrev(abbrev, case_sensitive=False):
     """
     Given a country code abbreviation, check to see if it matches the
     country table.
-    
+
     abbrev: (str) Country code to evaluate.
     case_sensitive: (bool) When True, enforce case sensitivity.
-    
+
     Returns True if valid, False if not.
     """
     if case_sensitive:
         country_code = abbrev
     else:
         country_code = abbrev.upper()
-        
+
     for code, full_name in COUNTRY_TUPLES:
         if country_code == code:
             return True
-        
+
     return False
 
 def get_name_from_abbrev(abbrev, case_sensitive=False):
     """
     Given a country code abbreviation, get the full name from the table.
-    
+
     abbrev: (str) Country code to retrieve the full name of.
     case_sensitive: (bool) When True, enforce case sensitivity.
     """
@@ -282,9 +282,9 @@ def get_name_from_abbrev(abbrev, case_sensitive=False):
         country_code = abbrev
     else:
         country_code = abbrev.upper()
-        
+
     for code, full_name in COUNTRY_TUPLES:
         if country_code == code:
             return full_name
-        
+
     raise KeyError('No country with that country code.')
