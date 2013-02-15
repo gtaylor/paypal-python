@@ -42,7 +42,7 @@ class PayPalConfig(object):
         'PRODUCTION': 'https://www.paypal.com/webscr',
     }
 
-    API_VERSION = '72.0'
+    API_VERSION = '98.0'
 
     # Defaults. Used in the absence of user-specified values.
     API_ENVIRONMENT = 'SANDBOX'
