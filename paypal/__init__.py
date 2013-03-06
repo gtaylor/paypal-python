@@ -9,6 +9,4 @@ from paypal.exceptions import PayPalError, PayPalConfigError, PayPalAPIResponseE
 import paypal.countries
 import logging
 
-logging.basicConfig()
-
 VERSION = '1.2.0'
