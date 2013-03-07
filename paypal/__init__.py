@@ -7,6 +7,5 @@ from paypal.settings import PayPalConfig
 from paypal.exceptions import PayPalError, PayPalConfigError, PayPalAPIResponseError
 #noinspection PyUnresolvedReferences
 import paypal.countries
-import logging
 
 VERSION = '1.2.0'
