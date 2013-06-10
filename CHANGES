@@ -5,6 +5,7 @@ Changes introduced with each version.
 * Added support for RefundTransaction. (cbsmith)
 * Migrated from ancient 72.0 API_VERSION to 98.0 API_VERSION. (cbsmith)
 * Style guide compliance updates (some pep8 and pyflakes love). (cbsmith)
+* BIC: Python 2.5 is no longer officially supported. Time to move on, folks.
 
 1.2.0
 -----

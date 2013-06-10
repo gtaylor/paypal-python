@@ -22,7 +22,7 @@ with PayPal.*
 Requirements
 ------------
 
-* Python 2.5, 2.6 or 2.7
+* Python 2.6 or 2.7
 
 Installation
 ------------
