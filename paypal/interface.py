@@ -25,6 +25,9 @@ else:
 logger = logging.getLogger('paypal.interface')
 
 class PayPalInterface(object):
+
+    __credentials = ['USER', 'PWD', 'SIGNATURE', 'SUBJECT']
+
     """
     The end developers will do 95% of their work through this class. API
     queries, configuration, etc, all go through here. See the __init__ method
@@ -130,7 +133,10 @@ class PayPalInterface(object):
 
         if not response.success:
             logger.error('A PayPal API error was encountered.')
-            logger.error('PayPal NVP Query Key/Vals:\n%s' % pformat(url_values))
+            url_values_no_credentials = dict((p, 'X' * len(v) if p in \
+                self.__credentials else v) for (p, v) in url_values.items())
+            logger.error('PayPal NVP Query Key/Vals (credentials removed):' \
+                '\n%s' % pformat(url_values_no_credentials))
             logger.error('PayPal NVP Query Response')
             logger.error(response)
             raise PayPalAPIResponseError(response)
