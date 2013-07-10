@@ -119,12 +119,12 @@ class PayPalInterface(object):
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug('PayPal NVP Query Key/Vals:\n%s' % pformat(url_values))
 
-        req = requests.get(
+        req = requests.post(
             self.config.API_ENDPOINT,
-            params=url_values,
+            data=url_values,
             timeout=self.config.HTTP_TIMEOUT,
             verify=self.config.API_CA_CERTS,
-        )
+            )
 
         # Call paypal API
         response = PayPalResponse(req.text, self.config)
