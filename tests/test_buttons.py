@@ -5,6 +5,7 @@ from . import interface_factory
 
 interface = interface_factory.get_interface_obj()
 
+
 class ButtonTests(unittest.TestCase):
     """
     These test the BM button API available in Payments Standard and up. This
