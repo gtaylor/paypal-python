@@ -2,6 +2,7 @@
 """
 PayPalResponse parsing and processing.
 """
+
 import logging
 from pprint import pformat
 
@@ -24,6 +25,7 @@ else:
     parse_qs = urlparse.parse_qs
 
 logger = logging.getLogger('paypal.response')
+
 
 class PayPalResponse(object):
     """

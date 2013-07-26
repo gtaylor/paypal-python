@@ -24,6 +24,7 @@ else:
 
 logger = logging.getLogger('paypal.interface')
 
+
 class PayPalInterface(object):
 
     __credentials = ['USER', 'PWD', 'SIGNATURE', 'SUBJECT']
@@ -124,7 +125,7 @@ class PayPalInterface(object):
             data=url_values,
             timeout=self.config.HTTP_TIMEOUT,
             verify=self.config.API_CA_CERTS,
-            )
+        )
 
         # Call paypal API
         response = PayPalResponse(req.text, self.config)
@@ -435,7 +436,7 @@ class PayPalInterface(object):
         args = self._sanitize_locals(locals())
         return self._call('GetRecurringPaymentsProfileDetails', **args)
 
-    def manage_recurring_payments_profile_status(self, profileid, action, note = None):
+    def manage_recurring_payments_profile_status(self, profileid, action, note=None):
         """Shortcut to the ManageRecurringPaymentsProfileStatus method.
 
         ``profileid`` is the same profile id used for getting profile details.
