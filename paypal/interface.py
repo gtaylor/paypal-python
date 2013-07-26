@@ -18,9 +18,9 @@ from paypal.compat import is_py3
 
 if is_py3:
     #noinspection PyUnresolvedReferences
-    import urllib.parse
+    from urllib.parse import urlencode
 else:
-    import urllib
+    from urllib import urlencode
 
 logger = logging.getLogger('paypal.interface')
 
@@ -407,12 +407,7 @@ class PayPalInterface(object):
         self._check_required(required_vals, **kwargs)
         url = "%s?cmd=_cart&upload=1" % self.config.PAYPAL_URL_BASE
         additional = self._encode_utf8(**kwargs)
-        if is_py3:
-            #noinspection PyUnresolvedReferences
-            additional = urllib.parse.urlencode(additional)
-        else:
-            #noinspection PyUnresolvedReferences
-            additional = urllib.urlencode(additional)
+        additional = urlencode(additional)
         return url + "&" + additional
 
     def get_recurring_payments_profile_details(self, profileid):
