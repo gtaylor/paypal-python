@@ -56,7 +56,7 @@ Support/Help
 If you have any problems, questions, or ideas, feel free to post on our
 `issue tracker`_.
 
-.. _issue tracker: http://github.com/duointeractive/paypal-python/issues)
+.. _issue tracker: http://github.com/duointeractive/paypal-python/issues
 
 Addendum A
 ----------
