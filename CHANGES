@@ -7,6 +7,7 @@ Changes introduced with each version.
 * Style guide compliance updates (some pep8 and pyflakes love). (cbsmith)
 * Use POST instead of GET for NVP API to avoid GET length limits. (marcbelmont)
 * Obscure API credentials in logged error messages. (davidfooks)
+* Various PEP8'ification and cleanup. (oczkers)
 * BIC: Python 2.5 is no longer officially supported. Time to move on, folks.
 
 1.2.0
