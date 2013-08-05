@@ -18,11 +18,12 @@ from paypal.compat import is_py3
 
 if is_py3:
     #noinspection PyUnresolvedReferences
-    import urllib.parse
+    from urllib.parse import urlencode
 else:
-    import urllib
+    from urllib import urlencode
 
 logger = logging.getLogger('paypal.interface')
+
 
 class PayPalInterface(object):
 
@@ -124,7 +125,7 @@ class PayPalInterface(object):
             data=url_values,
             timeout=self.config.HTTP_TIMEOUT,
             verify=self.config.API_CA_CERTS,
-            )
+        )
 
         # Call paypal API
         response = PayPalResponse(req.text, self.config)
@@ -406,12 +407,7 @@ class PayPalInterface(object):
         self._check_required(required_vals, **kwargs)
         url = "%s?cmd=_cart&upload=1" % self.config.PAYPAL_URL_BASE
         additional = self._encode_utf8(**kwargs)
-        if is_py3:
-            #noinspection PyUnresolvedReferences
-            additional = urllib.parse.urlencode(additional)
-        else:
-            #noinspection PyUnresolvedReferences
-            additional = urllib.urlencode(additional)
+        additional = urlencode(additional)
         return url + "&" + additional
 
     def get_recurring_payments_profile_details(self, profileid):
@@ -435,7 +431,7 @@ class PayPalInterface(object):
         args = self._sanitize_locals(locals())
         return self._call('GetRecurringPaymentsProfileDetails', **args)
 
-    def manage_recurring_payments_profile_status(self, profileid, action, note = None):
+    def manage_recurring_payments_profile_status(self, profileid, action, note=None):
         """Shortcut to the ManageRecurringPaymentsProfileStatus method.
 
         ``profileid`` is the same profile id used for getting profile details.

@@ -4,6 +4,7 @@ This module contains config objects needed by paypal.interface.PayPalInterface.
 Most of this is transparent to the end developer, as the PayPalConfig object
 is instantiated by the PayPalInterface object.
 """
+
 import logging
 import os
 from pprint import pformat
@@ -12,6 +13,7 @@ from paypal.compat import basestring
 from paypal.exceptions import PayPalConfigError
 
 logger = logging.getLogger('paypal.settings')
+
 
 class PayPalConfig(object):
     """

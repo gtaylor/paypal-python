@@ -2,28 +2,22 @@
 """
 PayPalResponse parsing and processing.
 """
+
 import logging
 from pprint import pformat
 
-from paypal.compat import is_py3, is_py25
+from paypal.compat import is_py3
 
 if is_py3:
     #noinspection PyUnresolvedReferences
-    import urllib.parse
-    #noinspection PyUnresolvedReferences
-    parse_qs = urllib.parse.parse_qs
-elif is_py25:
-    import cgi
-    #noinspection PyUnresolvedReferences, PyDeprecation
-    parse_qs = cgi.parse_qs
+    from urllib.parse import parse_qs
 else:
     # Python 2.6 and up (but not 3.0) have urlparse.parse_qs, which is copied
     # from Python 2.5's cgi.parse_qs.
-    import urlparse
-    #noinspection PyUnresolvedReferences, PyDeprecation
-    parse_qs = urlparse.parse_qs
+    from urlparse import parse_qs
 
 logger = logging.getLogger('paypal.response')
+
 
 class PayPalResponse(object):
     """

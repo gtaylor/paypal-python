@@ -7,6 +7,7 @@ from . import api_details
 
 interface = interface_factory.get_interface_obj()
 
+
 class TestDirectPayment(unittest.TestCase):
 
     def setUp(self):
@@ -34,7 +35,7 @@ class TestDirectPayment(unittest.TestCase):
         self.assertTrue(details.success)
         self.assertEqual(details.PAYMENTSTATUS.upper(), 'COMPLETED')
         self.assertEqual(details.REASONCODE.upper(), 'NONE')
-        
+
     def test_exception_handling(self):
         """
         Make sure response exception handling is working as intended by
@@ -44,7 +45,7 @@ class TestDirectPayment(unittest.TestCase):
         # Set an invalid credit card number.
         new_details['acct'] = '123'
         # Make sure this raises an exception.
-        self.assertRaises(PayPalAPIResponseError, interface.do_direct_payment, 
+        self.assertRaises(PayPalAPIResponseError, interface.do_direct_payment,
                           'Sale', **new_details)
 
     def test_abbreviated_sale(self):
