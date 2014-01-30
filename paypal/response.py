@@ -95,6 +95,10 @@ class PayPalResponse(object):
             # of each one. Hasn't failed us so far.
             return value[0]
         return value
+        
+    def items(self):
+        for key in self.raw.keys():
+            yield (key, self.__getitem__(key))
 
     def success(self):
         """
