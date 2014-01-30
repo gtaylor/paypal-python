@@ -97,6 +97,12 @@ class PayPalResponse(object):
         return value
         
     def items(self):
+        items_list = []
+        for key in self.raw.keys():
+            items_list.append((key, self.__getitem__(key))
+        return items_list
+        
+    def iteritems(self):
         for key in self.raw.keys():
             yield (key, self.__getitem__(key))
 
