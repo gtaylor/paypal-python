@@ -13,6 +13,7 @@ import requests
 
 from paypal.settings import PayPalConfig
 from paypal.response import PayPalResponse
+from paypal.response_list import PayPalResponseList
 from paypal.exceptions import PayPalError, PayPalAPIResponseError
 from paypal.compat import is_py3
 
@@ -316,6 +317,25 @@ class PayPalInterface(object):
         * TRANSACTIONID
         """
         return self._call('GetTransactionDetails', **kwargs)
+
+    def transaction_search(self, **kwargs):
+        """Shortcut for the TransactionSearch method.
+        Returns a PayPalResponseList object, which merges the L_ syntax list
+        to a list of dictionaries with properly named keys.
+
+        Note that the API will limit returned transactions to 100.
+
+        Required Kwargs
+        ---------------
+        * STARTDATE
+        
+        Optional Kwargs
+        ---------------
+        STATUS = one of ['Pending','Processing','Success','Denied','Reversed']
+
+        """
+        plain = self._call('TransactionSearch', **kwargs)
+        return PayPalResponseList(plain.raw, self.config)
 
     def set_express_checkout(self, **kwargs):
         """Start an Express checkout.
