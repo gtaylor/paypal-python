@@ -106,12 +106,20 @@ class PayPalInterface(object):
             'VERSION': self.config.API_VERSION,
         }
 
+        # This dict holds kwarg parameters to pass to the requests API.
+        requests_kwargs = dict()
+
         if self.config.API_AUTHENTICATION_MODE == "3TOKEN":
             url_values['USER'] = self.config.API_USERNAME
             url_values['PWD'] = self.config.API_PASSWORD
             url_values['SIGNATURE'] = self.config.API_SIGNATURE
         elif self.config.API_AUTHENTICATION_MODE == "UNIPAY":
             url_values['SUBJECT'] = self.config.UNIPAY_SUBJECT
+        elif self.config.API_AUTHENTICATION_MODE == "CERTIFICATE":
+            url_values['USER'] = self.config.API_USERNAME
+            url_values['PWD'] = self.config.API_PASSWORD
+            requests_kwargs['cert'] = (self.config.API_CERTIFICATE_FILENAME,
+                                       self.config.API_KEY_FILENAME)
 
         # All values passed to PayPal API must be uppercase.
         for key, value in kwargs.items():
@@ -126,6 +134,7 @@ class PayPalInterface(object):
             data=url_values,
             timeout=self.config.HTTP_TIMEOUT,
             verify=self.config.API_CA_CERTS,
+            **requests_kwargs
         )
 
         # Call paypal API
