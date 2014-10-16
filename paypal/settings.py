@@ -43,8 +43,8 @@ class PayPalConfig(object):
     }
 
     _PAYPAL_URL_BASE = {
-        'SANDBOX': 'https://www.sandbox.paypal.com/webscr',
-        'PRODUCTION': 'https://www.paypal.com/webscr',
+        'SANDBOX': 'https://www.sandbox.paypal.com/cgi-bin/webscr',
+        'PRODUCTION': 'https://www.paypal.com/cgi-bin/webscr',
     }
 
     API_VERSION = '98.0'
