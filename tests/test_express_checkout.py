@@ -189,17 +189,10 @@ class CallTest(unittest.TestCase):
             paypal_response = interface._call('some_method',
                                               param_a='a1',
                                               param_b='b2')
-        expected_data = {'PARAM_A': 'a1',
-                         'PARAM_B': 'b2',
-                         'USER': interface.config.API_USERNAME,
-                         'PWD': interface.config.API_PASSWORD,
-                         'SIGNATURE': interface.config.API_SIGNATURE,
-                         'METHOD': 'some_method',
-                         'VERSION': interface.config.API_VERSION}
-        post_mock.assert_called_once_with(interface.config.API_ENDPOINT,
-                                          timeout=interface.config.HTTP_TIMEOUT,
-                                          verify=interface.config.API_CA_CERTS,
-                                          data=expected_data)
+        expected_data = interface._get_call_params('some_method',
+                                                   param_a='a1',
+                                                   param_b='b2')
+        post_mock.assert_called_once_with(**expected_data)
         self.assertIsInstance(paypal_response, PayPalResponse)
         self.assertTrue(paypal_response.success)
 

@@ -100,54 +100,24 @@ class PayPalInterface(object):
         ``method`` must be a supported NVP method listed at the above address.
         ``kwargs`` the actual call parameters
         """
-        # This dict holds the key/value pairs to pass to the PayPal API.
-        url_values = {
-            'METHOD': method,
-            'VERSION': self.config.API_VERSION,
-        }
-
-        # This dict holds kwarg parameters to pass to the requests API.
-        requests_kwargs = dict()
-
-        if self.config.API_AUTHENTICATION_MODE == "3TOKEN":
-            url_values['USER'] = self.config.API_USERNAME
-            url_values['PWD'] = self.config.API_PASSWORD
-            url_values['SIGNATURE'] = self.config.API_SIGNATURE
-        elif self.config.API_AUTHENTICATION_MODE == "UNIPAY":
-            url_values['SUBJECT'] = self.config.UNIPAY_SUBJECT
-        elif self.config.API_AUTHENTICATION_MODE == "CERTIFICATE":
-            url_values['USER'] = self.config.API_USERNAME
-            url_values['PWD'] = self.config.API_PASSWORD
-            requests_kwargs['cert'] = (self.config.API_CERTIFICATE_FILENAME,
-                                       self.config.API_KEY_FILENAME)
-
-        # All values passed to PayPal API must be uppercase.
-        for key, value in kwargs.items():
-            url_values[key.upper()] = value
+        post_params = self._get_call_params(method, **kwargs)
+        payload = post_params['data']
+        api_endpoint = post_params['url']
 
         # This shows all of the key/val pairs we're sending to PayPal.
         if logger.isEnabledFor(logging.DEBUG):
-            logger.debug('PayPal NVP Query Key/Vals:\n%s' % pformat(url_values))
+            logger.debug('PayPal NVP Query Key/Vals:\n%s' % pformat(payload))
 
-        req = requests.post(
-            self.config.API_ENDPOINT,
-            data=url_values,
-            timeout=self.config.HTTP_TIMEOUT,
-            verify=self.config.API_CA_CERTS,
-            **requests_kwargs
-        )
-
-        # Call paypal API
-        response = PayPalResponse(req.text, self.config)
-
-        logger.debug('PayPal NVP API Endpoint: %s' % self.config.API_ENDPOINT)
+        http_response = requests.post(**post_params)
+        response = PayPalResponse(http_response.text, self.config)
+        logger.debug('PayPal NVP API Endpoint: %s' % api_endpoint)
 
         if not response.success:
             logger.error('A PayPal API error was encountered.')
-            url_values_no_credentials = dict((p, 'X' * len(v) if p in \
-                self.__credentials else v) for (p, v) in url_values.items())
+            safe_payload = dict((p, 'X' * len(v) if p in \
+                self.__credentials else v) for (p, v) in payload.items())
             logger.error('PayPal NVP Query Key/Vals (credentials removed):' \
-                '\n%s' % pformat(url_values_no_credentials))
+                '\n%s' % pformat(safe_payload))
             logger.error('PayPal NVP Query Response')
             logger.error(response)
             raise PayPalAPIResponseError(response)
