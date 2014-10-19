@@ -1,5 +1,9 @@
 Changes introduced with each version.
 
+1.2.2
+-----
+* Added ``useraction`` parameter to Express Checkout URL generation
+
 1.2.1
 -----
 * Added support for RefundTransaction. (cbsmith)
