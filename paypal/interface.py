@@ -15,7 +15,9 @@ import requests
 from paypal.settings import PayPalConfig
 from paypal.response import PayPalResponse
 from paypal.response_list import PayPalResponseList
-from paypal.exceptions import PayPalError, PayPalAPIResponseError
+from paypal.exceptions import (PayPalError,
+                               PayPalAPIResponseError,
+                               PayPalConfigError)
 from paypal.compat import is_py3
 
 if is_py3:
@@ -147,6 +149,13 @@ class PayPalInterface(object):
                            self.config.API_KEY_FILENAME)
         elif self.config.API_AUTHENTICATION_MODE == "UNIPAY":
             payload['SUBJECT'] = self.config.UNIPAY_SUBJECT
+
+        none_configs = [config for config, value in payload.iteritems()\
+                        if value is None]
+        if none_configs:
+            raise PayPalConfigError(
+                "Config(s) %s cannot be None. Please, check this "
+                "interface's config." % none_configs)
 
         # all keys in the payload must be uppercase
         for key, value in kwargs.items():

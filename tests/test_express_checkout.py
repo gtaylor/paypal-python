@@ -7,7 +7,7 @@ from mock import patch, Mock
 
 from . import interface_factory
 from . import api_details
-from paypal.exceptions import PayPalAPIResponseError
+from paypal.exceptions import PayPalAPIResponseError, PayPalConfigError
 from paypal.interface import PayPalInterface
 from paypal.response import PayPalResponse
 
@@ -179,6 +179,19 @@ class CallParamsTest(unittest.TestCase):
                                 'timeout': interface.config.HTTP_TIMEOUT,
                                 'verify': interface.config.API_CA_CERTS}
         self.assertEqual(expected_call_params, call_params)
+
+    def test_raises_error_for_single_none_config(self):
+        interface = PayPalInterface(**self.configs_certificate)
+        interface.config.API_USERNAME = None
+        with self.assertRaisesRegexp(PayPalConfigError, 'USER'):
+            interface._get_call_params('some_method', some_param=123)
+
+    def test_raises_error_for_multiple_configs(self):
+        interface = PayPalInterface(**self.configs_certificate)
+        interface.config.API_USERNAME = None
+        interface.config.API_PASSWORD = None
+        with self.assertRaisesRegexp(PayPalConfigError, r'PWD.*USER'):
+            interface._get_call_params('some_method', some_param=123)
 
 
 class CallTest(unittest.TestCase):

@@ -3,6 +3,7 @@ Changes introduced with each version.
 1.2.2
 -----
 * Added ``useraction`` parameter to Express Checkout URL generation
+* Raise PayPalConfigError on call attempt with None values for configurations
 
 1.2.1
 -----
