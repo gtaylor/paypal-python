@@ -98,8 +98,7 @@ class PayPalInterface(object):
         https://www.x.com/docs/DOC-1374
 
         ``method`` must be a supported NVP method listed at the above address.
-
-        ``kwargs`` will be a hash of
+        ``kwargs`` the actual call parameters
         """
         # This dict holds the key/value pairs to pass to the PayPal API.
         url_values = {
