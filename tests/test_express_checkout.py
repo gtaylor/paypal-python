@@ -1,6 +1,8 @@
 # coding=utf-8
 
 import unittest
+import warnings
+
 from . import interface_factory
 from . import api_details
 
@@ -37,7 +39,7 @@ class TestExpressCheckout(unittest.TestCase):
         getexp_response = interface.get_express_checkout_details(token=token)
 
         # Redirect your client to this URL for approval.
-        redir_url = interface.generate_express_checkout_redirect_url(token)
+        redirect_url = interface.generate_express_checkout_redirect_url(token)
         # Once they have approved your transaction at PayPal, they'll get
         # directed to the returnurl value you defined in set_express_checkout()
         # above. This view should then call do_express_checkout_payment() with
@@ -70,3 +72,36 @@ class TestExpressCheckout(unittest.TestCase):
             A call to `DoVoid`.
         """
         pass
+
+
+class UrlGenerationTest(unittest.TestCase):
+
+    def test_no_useraction(self):
+        redirect_url = interface.generate_express_checkout_redirect_url(
+            'token-abc')
+        self.assertTrue(redirect_url.endswith(
+            '/webscr?cmd=_express-checkout&token=token-abc'))
+
+    def test_renders_useraction_commit(self):
+        redirect_url = interface.generate_express_checkout_redirect_url(
+            'token-abc', useraction='commit')
+        redirect_path = ('/webscr?cmd=_express-checkout&token=token-abc'
+                         '&useraction=commit')
+        self.assertTrue(redirect_url.endswith(redirect_path))
+
+    def test_renders_useraction_continue(self):
+        redirect_url = interface.generate_express_checkout_redirect_url(
+            'token-abc', useraction='continue')
+        redirect_path = ('/webscr?cmd=_express-checkout&token=token-abc'
+                         '&useraction=continue')
+        self.assertTrue(redirect_url.endswith(redirect_path))
+
+    def test_renders_any_useraction_with_warning(self):
+        with warnings.catch_warnings(record=True) as warning_context:
+            redirect_url = interface.generate_express_checkout_redirect_url(
+                'token-abc', useraction='some_action')
+            self.assertTrue(issubclass(warning_context[0].category,
+                                       RuntimeWarning))
+        redirect_path = ('/webscr?cmd=_express-checkout&token=token-abc'
+                         '&useraction=some_action')
+        self.assertTrue(redirect_url.endswith(redirect_path))

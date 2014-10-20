@@ -8,6 +8,7 @@ with it.
 import types
 import logging
 from pprint import pformat
+import warnings
 
 import requests
 
@@ -337,7 +338,7 @@ class PayPalInterface(object):
         Required Kwargs
         ---------------
         * STARTDATE
-        
+
         Optional Kwargs
         ---------------
         STATUS = one of ['Pending','Processing','Success','Denied','Reversed']
@@ -412,7 +413,7 @@ class PayPalInterface(object):
         """
         return self._call('DoExpressCheckoutPayment', **kwargs)
 
-    def generate_express_checkout_redirect_url(self, token):
+    def generate_express_checkout_redirect_url(self, token, useraction=None):
         """Returns the URL to redirect the user to for the Express checkout.
 
         Express Checkouts must be verified by the customer by redirecting them
@@ -420,12 +421,23 @@ class PayPalInterface(object):
         :meth:`set_express_checkout` with this function to figure out where
         to redirect the user to.
 
+        The button text on the PayPal page can be controlled via `useraction`.
+        The documented possible values are `commit` and `continue`. However,
+        any other value will only result in a warning.
+
         :param str token: The unique token identifying this transaction.
+        :param str useraction: Control the button text on the PayPal page.
         :rtype: str
         :returns: The URL to redirect the user to for approval.
         """
         url_vars = (self.config.PAYPAL_URL_BASE, token)
-        return "%s?cmd=_express-checkout&token=%s" % url_vars
+        url = "%s?cmd=_express-checkout&token=%s" % url_vars
+        if useraction:
+            if not useraction.lower() in ('commit', 'continue'):
+                warnings.warn('useraction=%s is not documented' % useraction,
+                              RuntimeWarning)
+            url += '&useraction=%s' % useraction
+        return url
 
     def generate_cart_upload_redirect_url(self, **kwargs):
         """https://www.sandbox.paypal.com/webscr
