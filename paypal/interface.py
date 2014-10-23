@@ -15,7 +15,9 @@ import requests
 from paypal.settings import PayPalConfig
 from paypal.response import PayPalResponse
 from paypal.response_list import PayPalResponseList
-from paypal.exceptions import PayPalError, PayPalAPIResponseError
+from paypal.exceptions import (PayPalError,
+                               PayPalAPIResponseError,
+                               PayPalConfigError)
 from paypal.compat import is_py3
 
 if is_py3:
@@ -98,62 +100,72 @@ class PayPalInterface(object):
         https://www.x.com/docs/DOC-1374
 
         ``method`` must be a supported NVP method listed at the above address.
-
-        ``kwargs`` will be a hash of
+        ``kwargs`` the actual call parameters
         """
-        # This dict holds the key/value pairs to pass to the PayPal API.
-        url_values = {
-            'METHOD': method,
-            'VERSION': self.config.API_VERSION,
-        }
-
-        # This dict holds kwarg parameters to pass to the requests API.
-        requests_kwargs = dict()
-
-        if self.config.API_AUTHENTICATION_MODE == "3TOKEN":
-            url_values['USER'] = self.config.API_USERNAME
-            url_values['PWD'] = self.config.API_PASSWORD
-            url_values['SIGNATURE'] = self.config.API_SIGNATURE
-        elif self.config.API_AUTHENTICATION_MODE == "UNIPAY":
-            url_values['SUBJECT'] = self.config.UNIPAY_SUBJECT
-        elif self.config.API_AUTHENTICATION_MODE == "CERTIFICATE":
-            url_values['USER'] = self.config.API_USERNAME
-            url_values['PWD'] = self.config.API_PASSWORD
-            requests_kwargs['cert'] = (self.config.API_CERTIFICATE_FILENAME,
-                                       self.config.API_KEY_FILENAME)
-
-        # All values passed to PayPal API must be uppercase.
-        for key, value in kwargs.items():
-            url_values[key.upper()] = value
+        post_params = self._get_call_params(method, **kwargs)
+        payload = post_params['data']
+        api_endpoint = post_params['url']
 
         # This shows all of the key/val pairs we're sending to PayPal.
         if logger.isEnabledFor(logging.DEBUG):
-            logger.debug('PayPal NVP Query Key/Vals:\n%s' % pformat(url_values))
+            logger.debug('PayPal NVP Query Key/Vals:\n%s' % pformat(payload))
 
-        req = requests.post(
-            self.config.API_ENDPOINT,
-            data=url_values,
-            timeout=self.config.HTTP_TIMEOUT,
-            verify=self.config.API_CA_CERTS,
-            **requests_kwargs
-        )
-
-        # Call paypal API
-        response = PayPalResponse(req.text, self.config)
-
-        logger.debug('PayPal NVP API Endpoint: %s' % self.config.API_ENDPOINT)
+        http_response = requests.post(**post_params)
+        response = PayPalResponse(http_response.text, self.config)
+        logger.debug('PayPal NVP API Endpoint: %s' % api_endpoint)
 
         if not response.success:
             logger.error('A PayPal API error was encountered.')
-            url_values_no_credentials = dict((p, 'X' * len(v) if p in \
-                self.__credentials else v) for (p, v) in url_values.items())
+            safe_payload = dict((p, 'X' * len(v) if p in \
+                self.__credentials else v) for (p, v) in payload.items())
             logger.error('PayPal NVP Query Key/Vals (credentials removed):' \
-                '\n%s' % pformat(url_values_no_credentials))
+                '\n%s' % pformat(safe_payload))
             logger.error('PayPal NVP Query Response')
             logger.error(response)
             raise PayPalAPIResponseError(response)
 
         return response
+
+    def _get_call_params(self, method, **kwargs):
+        """
+        Returns the prepared call parameters. Mind, these will be keyword
+        arguments to ``requests.post``.
+
+        ``method`` the NVP method
+        ``kwargs`` the actual call parameters
+        """
+        payload = {'METHOD': method,
+                   'VERSION': self.config.API_VERSION}
+        certificate = None
+
+        if self.config.API_AUTHENTICATION_MODE == "3TOKEN":
+            payload['USER'] = self.config.API_USERNAME
+            payload['PWD'] = self.config.API_PASSWORD
+            payload['SIGNATURE'] = self.config.API_SIGNATURE
+        elif self.config.API_AUTHENTICATION_MODE == "CERTIFICATE":
+            payload['USER'] = self.config.API_USERNAME
+            payload['PWD'] = self.config.API_PASSWORD
+            certificate = (self.config.API_CERTIFICATE_FILENAME,
+                           self.config.API_KEY_FILENAME)
+        elif self.config.API_AUTHENTICATION_MODE == "UNIPAY":
+            payload['SUBJECT'] = self.config.UNIPAY_SUBJECT
+
+        none_configs = [config for config, value in payload.iteritems()\
+                        if value is None]
+        if none_configs:
+            raise PayPalConfigError(
+                "Config(s) %s cannot be None. Please, check this "
+                "interface's config." % none_configs)
+
+        # all keys in the payload must be uppercase
+        for key, value in kwargs.items():
+            payload[key.upper()] = value
+
+        return {'data': payload,
+                'cert': certificate,
+                'url': self.config.API_ENDPOINT,
+                'timeout': self.config.HTTP_TIMEOUT,
+                'verify': self.config.API_CA_CERTS}
 
     def address_verify(self, email, street, zip):
         """Shortcut for the AddressVerify method.
