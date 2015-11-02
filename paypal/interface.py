@@ -115,13 +115,6 @@ class PayPalInterface(object):
         logger.debug('PayPal NVP API Endpoint: %s' % api_endpoint)
 
         if not response.success:
-            logger.error('A PayPal API error was encountered.')
-            safe_payload = dict((p, 'X' * len(v) if p in \
-                self.__credentials else v) for (p, v) in payload.items())
-            logger.error('PayPal NVP Query Key/Vals (credentials removed):' \
-                '\n%s' % pformat(safe_payload))
-            logger.error('PayPal NVP Query Response')
-            logger.error(response)
             raise PayPalAPIResponseError(response)
 
         return response
