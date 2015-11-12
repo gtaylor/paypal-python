@@ -40,7 +40,7 @@ setup(
     maintainer='Gregory Taylor',
     maintainer_email='gtaylor@gc-taylor.com',
     install_requires=required,
-    url='http://github.com/duointeractive/paypal-python/',
+    url='https://github.com/gtaylor/paypal-python',
     download_url='http://pypi.python.org/pypi/paypal/',
     packages=packages,
     platforms=['Platform Independent'],

@@ -1,5 +1,10 @@
 Changes introduced with each version.
 
+1.2.3
+-----
+
+* Removed handled exception error logging. Cuts down on spam. (ibrahimsag)
+
 1.2.2
 -----
 * Added ``useraction`` parameter to Express Checkout URL generation
