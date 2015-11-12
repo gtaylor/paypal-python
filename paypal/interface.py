@@ -1,7 +1,7 @@
 # coding=utf-8
 """
-The end developer will do most of their work with the PayPalInterface class found
-in this module. Configuration, querying, and manipulation can all be done
+The end developer will do most of their work with the PayPalInterface class
+found in this module. Configuration, querying, and manipulation can all be done
 with it.
 """
 
@@ -143,7 +143,7 @@ class PayPalInterface(object):
         elif self.config.API_AUTHENTICATION_MODE == "UNIPAY":
             payload['SUBJECT'] = self.config.UNIPAY_SUBJECT
 
-        none_configs = [config for config, value in payload.iteritems()\
+        none_configs = [config for config, value in payload.iteritems()
                         if value is None]
         if none_configs:
             raise PayPalConfigError(
@@ -250,7 +250,8 @@ class PayPalInterface(object):
         args = self._sanitize_locals(locals())
         return self._call('DoAuthorization', **args)
 
-    def do_capture(self, authorizationid, amt, completetype='Complete', **kwargs):
+    def do_capture(self, authorizationid, amt, completetype='Complete',
+                   **kwargs):
         """Shortcut for the DoCapture method.
 
         Use the TRANSACTIONID from DoAuthorization, DoDirectPayment or
@@ -289,7 +290,8 @@ class PayPalInterface(object):
 
             direct_payment(**charge)
 
-        To issue an Authorization, simply pass "Authorization" instead of "Sale".
+        To issue an Authorization, simply pass "Authorization" instead
+        of "Sale".
 
         You may also explicitly set ``paymentaction`` as a keyword argument:
 
@@ -372,7 +374,9 @@ class PayPalInterface(object):
 
     def refund_transaction(self, transactionid=None, payerid=None, **kwargs):
         """Shortcut for RefundTransaction method.
-           Note new API supports passing a PayerID instead of a transaction id, exactly one must be provided.
+           Note new API supports passing a PayerID instead of a transaction id,
+           exactly one must be provided.
+
            Optional:
                INVOICEID
                REFUNDTYPE
@@ -390,11 +394,16 @@ class PayPalInterface(object):
                STOREID
                TERMINALID
            """
-        #this line seems like a complete waste of time... kwargs should not be populated
+        # This line seems like a complete waste of time... kwargs should not
+        # be populated
         if (transactionid is None) and (payerid is None):
-            raise PayPalError('RefundTransaction requires either a transactionid or a payerid')
+            raise PayPalError(
+                'RefundTransaction requires either a transactionid or '
+                'a payerid')
         if (transactionid is not None) and (payerid is not None):
-            raise PayPalError('RefundTransaction requires only one of transactionid %s and payerid %s' % (transactionid, payerid))
+            raise PayPalError(
+                'RefundTransaction requires only one of transactionid %s '
+                'and payerid %s' % (transactionid, payerid))
         if transactionid is not None:
             kwargs['TRANSACTIONID'] = transactionid
         else:
@@ -477,12 +486,14 @@ class PayPalInterface(object):
         args = self._sanitize_locals(locals())
         return self._call('GetRecurringPaymentsProfileDetails', **args)
 
-    def manage_recurring_payments_profile_status(self, profileid, action, note=None):
+    def manage_recurring_payments_profile_status(self, profileid, action,
+                                                 note=None):
         """Shortcut to the ManageRecurringPaymentsProfileStatus method.
 
         ``profileid`` is the same profile id used for getting profile details.
         ``action`` should be either 'Cancel', 'Suspend', or 'Reactivate'.
-        ``note`` is optional and is visible to the user. It contains the reason for the change in status.
+        ``note`` is optional and is visible to the user. It contains the
+            reason for the change in status.
         """
         args = self._sanitize_locals(locals())
         if not note:

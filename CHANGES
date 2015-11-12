@@ -4,6 +4,7 @@ Changes introduced with each version.
 -----
 
 * Removed handled exception error logging. Cuts down on spam. (ibrahimsag)
+* Some assorted PEP8 fixes. (gtaylor)
 
 1.2.2
 -----

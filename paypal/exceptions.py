@@ -43,4 +43,5 @@ class PayPalAPIResponseError(PayPalError):
         self.short_message = getattr(response, 'L_SHORTMESSAGE0', None)
         self.correlation_id = getattr(response, 'CORRELATIONID', None)
 
-        super(PayPalAPIResponseError, self).__init__(self.message, self.error_code)
+        super(PayPalAPIResponseError, self).__init__(
+            self.message, self.error_code)
