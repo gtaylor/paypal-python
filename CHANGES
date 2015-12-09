@@ -1,5 +1,10 @@
 Changes introduced with each version.
 
+1.2.4
+-----
+
+* Adjusted imports to be compatible with Python 3. (ibrahimsag)
+
 1.2.3
 -----
 
