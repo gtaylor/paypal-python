@@ -27,17 +27,22 @@ Requirements
 Installation
 ------------
 
-Through pip:
+Through pip::
+
     pip install paypal
-or easy_install:
+
+or easy_install::
+
     easy_install paypal
-or download the source, un-tar/un-zip it, cd into paypal-python, and:
+
+or download the source, un-tar/un-zip it, cd into paypal-python, and::
+
     python setup.py install
 
 Quick Start
 -----------
 
-To run test suite, do from within the paypal-python directory:
+To run test suite, do from within the paypal-python directory::
 
     pip install nose
     nosetests tests/
@@ -56,7 +61,7 @@ Support/Help
 If you have any problems, questions, or ideas, feel free to post on our
 `issue tracker`_.
 
-.. _issue tracker: http://github.com/duointeractive/paypal-python/issues
+.. _issue tracker: http://github.com/gtaylor/paypal-python/issues
 
 Addendum A
 ----------
@@ -65,27 +70,27 @@ Instructions for setting up a Sandbox Website Payments Pro account. More
 detailed instructions can be found at [x.com](http://x.com) but this is what
 worked for me.
 
- 1. Create Sandbox account. Don't use your live PayPal account email address.
- 2. Login to Sandbox
- 3. Test Accounts -> "Preconfigured" -- the manual process sucks.
- 4. Make a "Seller" account
- 5. Don't change "login email" at all -- it seems to truncate to 6 characters.
- 6. I took the numeric password they gave as default and copy/pasted it into a
-    plain text document so I could use it later to make all my test account
-    passwords the same.
- 7. I chose Visa as the credit card.
- 8. Bank Account = "Yes" -- This is needed for a Verified account, which is
-    needed for Website Payments Pro.
- 9. Put $1,000 of fake $$ into the account. At one point I tried $5,000 but
-    the test account I created wasn't Verified automatically? Not sure if the
-    two are related.
- 10. No notes.
- 11. "Create Account"
- 12. When it takes you back to the "Test Accounts" screen, it should say
-     "Business" and "Verified"
- 13. When you click on "API Credentials" you should see API credentials for the
-     corresponding test account you just created. I copy/pasted them into the
-     same text file used above.
+1. Create Sandbox account. Don't use your live PayPal account email address.
+2. Login to Sandbox
+3. Test Accounts -> "Preconfigured" -- the manual process sucks.
+4. Make a "Seller" account
+5. Don't change "login email" at all -- it seems to truncate to 6 characters.
+6. I took the numeric password they gave as default and copy/pasted it into a
+   plain text document so I could use it later to make all my test account
+   passwords the same.
+7. I chose Visa as the credit card.
+8. Bank Account = "Yes" -- This is needed for a Verified account, which is
+   needed for Website Payments Pro.
+9. Put $1,000 of fake $$ into the account. At one point I tried $5,000 but
+   the test account I created wasn't Verified automatically? Not sure if the
+   two are related.
+10. No notes.
+11. "Create Account"
+12. When it takes you back to the "Test Accounts" screen, it should say
+    "Business" and "Verified"
+13. When you click on "API Credentials" you should see API credentials for the
+    corresponding test account you just created. I copy/pasted them into the
+    same text file used above.
 
 The next step was the tricky part, at least for me. I was getting `10501`
 errors which means the billing agreement wasn't agreed to. Apparently you need
@@ -105,6 +110,8 @@ agree to the agreement. Now your API calls will work as expected.
 
 LICENSE
 -------
+
+::
 
     Copyright 2009 Pat Collins <pat@burned.com>
     Copyright 2012 DUO Interactive, LLC <gtaylor@duointeractive.com>
