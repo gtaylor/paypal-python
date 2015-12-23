@@ -143,7 +143,7 @@ class PayPalInterface(object):
         elif self.config.API_AUTHENTICATION_MODE == "UNIPAY":
             payload['SUBJECT'] = self.config.UNIPAY_SUBJECT
 
-        none_configs = [config for config, value in payload.iteritems()
+        none_configs = [config for config, value in payload.items()
                         if value is None]
         if none_configs:
             raise PayPalConfigError(
