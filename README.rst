@@ -1,6 +1,13 @@
 PayPal-Python
 =============
 
+
+:Author: Pat Collins
+:Maintainer: Greg Taylor
+:License: Apache v2
+:Status: Stable
+:Maintained: Quasi-maintained, looking for new maintainer (file issue if interested)
+
 This package implements Paypal's Website Payments Pro NVP API in Python.
 This currently includes Direct Payments (Credit card payments without a PayPal
 Account) and PayPal Express Checkout (Payment via a PayPal account).
