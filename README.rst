@@ -122,6 +122,7 @@ LICENSE
 
     Copyright 2009 Pat Collins <pat@burned.com>
     Copyright 2012 DUO Interactive, LLC <gtaylor@duointeractive.com>
+    Copyright 2014 Greg Taylor
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.

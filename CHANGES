@@ -1,5 +1,11 @@
 Changes introduced with each version.
 
+1.2.5
+-----
+
+* Replaced iteritems() with iter() for Python 3 compat. (brutasse)
+* A few README fixes. (brutasse)
+
 1.2.4
 -----
 
