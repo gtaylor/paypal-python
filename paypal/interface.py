@@ -516,7 +516,7 @@ class PayPalInterface(object):
         return self._call('UpdateRecurringPaymentsProfile', **kwargs)
 
     def bm_create_button(self, **kwargs):
-        """Shortcut to the BMButtonSearch method.
+        """Shortcut to the BMCreateButton method.
 
         See the docs for details on arguments:
         https://cms.paypal.com/mx/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_nvp_BMCreateButton
