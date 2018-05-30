@@ -10,8 +10,7 @@ from paypal import PayPalConfig
 # credentials, not the certificate stuff.
 CONFIG = PayPalConfig(API_USERNAME="xxx_xxx_apix.xxx.com",
                       API_PASSWORD="xxxxxxxxxx",
-                      API_SIGNATURE="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-                      DEBUG_LEVEL=0)
+                      API_SIGNATURE="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
 
 # The following values may be found by visiting https://developer.paypal.com/,
 # clicking on the 'Applications' -> 'Sandbox accounts' link in the sandbox,
